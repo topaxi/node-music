@@ -1,0 +1,260 @@
+body {
+  font: 14px/20px "DejaVu Sans", "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00b7ff;
+}
+
+td { cursor: pointer; text-overflow: ellipsis; white-space: nowrap }
+
+table { border-collapse: collapse }
+
+tr:hover td { background: #bbb }
+
+tr.active, tr.active td { font-weight: bold; background: #bbb }
+
+ul { list-style: none; padding: 0; margin: 0 }
+
+.h {
+  font-size: 11px;
+  color: #888;
+}
+
+.hi {
+  font-size: 11px;
+  color: #fff;
+}
+
+.tac { text-align: center }
+
+.download { width: 24px; height: 24px; vertical-align: top }
+
+#volume {
+  width: 200px;
+  position: absolute;
+  left: 790px;
+  top: 23px;
+}
+
+#back, #play, #next {
+  /*font-size: 32px;*/
+  display: inline-block;
+  margin-right: 5px;
+  cursor: pointer;
+  position: absolute;
+  left: 200px;
+  top: 5px;
+}
+
+#play {
+  left: 236px;
+}
+
+#next {
+  left: 272px;
+}
+
+#current {
+  position: absolute;
+  top: 0;
+  left: 320px;
+}
+
+label[for=shuffle] {
+  position: absolute;
+  left: 1024px;
+  top: 5px
+}
+
+#repeat {
+  position: absolute;
+  left: 1024px;
+  top: 48px
+}
+
+#buffered {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 800px;
+  height: 54px;
+  background: rgba(255, 255, 255, .666);
+}
+
+#progress { position: absolute; top: 42px; left: 200px; overflow: hidden }
+#progress .progress, #progress .hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0, 64, 223, .33);
+  border-right: 1px solid rgb(0, 0, 255);
+  height: 54px;
+}
+
+#progress .hover {
+  background: rgba(0, 80, 239, .25);
+}
+
+#progress .hovertime {
+  position: absolute;
+  right: -18px;
+  top: 18px;
+  font-size: 11px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, .5);
+  color: #fff;
+  font-weight: bold;
+  pointer-events: none;
+  cursor: default;
+}
+
+#waveform { width: 800px; height: 54px }
+
+#duration, #time, #remaining { pointer-events: none; font-weight: bold}
+#duration { position: absolute; right: 5px; text-shadow: 2px 2px 3px #fff  }
+#time { position: absolute; right: 5px; text-shadow: 2px 2px 3px #000 }
+#remaining { position: absolute; right: -45px; bottom: 0; color: #333; text-shadow: -2px -2px 3px #fff }
+
+.dn { display: none }
+
+#controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 108px;
+}
+
+#video, video, audio {
+  width: 192px;
+  height: 108px
+}
+
+.fullscreen {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 999999;
+  background: #000;
+}
+
+#main {
+  position: absolute;
+  left: 0;
+  top: 108px;
+  bottom: 0;
+  right: 0;
+}
+
+#places {
+  width: 200px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+#artists {
+  overflow: auto;
+  position: absolute;
+  width: 200px;
+  left: 200px;
+  top: 0;
+  bottom: 50%;
+}
+
+#artists li {
+  cursor: pointer;
+}
+
+#artists li.active { font-weight: bold }
+#artists li:hover, #artists li.active {
+  background: #bbb;
+}
+
+#albums {
+  overflow: auto;
+  position: absolute;
+  width: 200px;
+  left: 200px;
+  top: 50%;
+  bottom: 0;
+}
+
+#albums li {
+  cursor: pointer;
+}
+
+#albums li.active { font-weight: bold }
+#albums li:hover, #albums li.active {
+  background: #bbb;
+}
+
+#tracks {
+  overflow-y: scroll;
+  /*overflow-x: hidden;*/
+  position: absolute;
+  left: 400px;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+tr th {
+  background: #ddd;
+}
+
+tr:nth-child(even), th {
+  background: #e7e7e7;
+}
+
+#tracks table { width: 100% }
+
+/*
+#tracks thead tr {
+  display: block;
+}
+
+#tracks th { width: 33%; }
+
+#tracks tbody {
+  display: block;
+  overflow: auto;
+  position: absolute;
+  top: 2em;
+  bottom: 0;
+}*/
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-button:start:decrement,
+*::-webkit-scrollbar-button:end:increment {
+    display: block;
+    height: 0;
+    width: 0;
+}
+
+*::-webkit-scrollbar-button:vertical:increment,
+*::-webkit-scrollbar-button:horizontal:increment {
+    background-color: transparent;
+    display: block;
+    height: 0;
+    width: 0;
+}
+
+*::-webkit-scrollbar-track-piece {
+    -webkit-border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:vertical,
+*::-webkit-scrollbar-thumb:horizontal {
+    background-color: #888;
+    -webkit-border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:vertical:hover,
+*::-webkit-scrollbar-thumb:horizontal:hover {
+    background-color: #aaa;
+}

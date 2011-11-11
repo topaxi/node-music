@@ -1,0 +1,10 @@
+!!!5
+html
+  head
+    title= title
+    meta(name='viewport', content='width=device-width,user-scalable=no,minimum-scale=1.0,maximum-scale=1.0')
+    link(rel='stylesheet', href='/theme/#{theme}/css/style.css')
+    script
+      nm={theme:'#{theme}'}
+    script(data-main='/javascripts/boot',src='/javascripts/r.js')
+  body!= body

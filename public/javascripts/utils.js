@@ -105,4 +105,26 @@ nm.utils.formatTime = function formatTime(seconds) {
   return (m ? '-' : '') + nm.utils.pad(seconds / 60, 2) +':'+ nm.utils.pad(seconds % 60, 2)
 }
 
+nm.utils.throttle = function(fun, delay) {
+  var timer
+
+  return function(a) {
+    var argv    = arguments
+      , context = this
+
+    if (!timer) timer = setTimeout(function() {
+      var argc = argv.length
+
+      // Function#apply is more expensive than Function#call.
+      // Most of the time, throttle is called for events which
+      // pass only one argument, use Function#call for those :)
+      if (argc > 1)  fun.apply(context, argv)
+      else if (argc) fun.call(context, a)
+      else           fun.call(context)
+
+      timer = 0
+    }, delay)
+  }
+}
+
 })()

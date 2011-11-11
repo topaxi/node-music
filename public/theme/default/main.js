@@ -6,10 +6,11 @@ var window         = this
   , JSON           = window.JSON
   , location       = window.location
   , sessionStorage = window.sessionStorage
+  , Math           = window.Math
   , nm             = window.nm
   , Player         = nm.Player
 
-Player.loadTracks = function loadTracks(tracks, cb) {
+function loadTracks(tracks, cb) {
   var $table = $('<table>').appendTo($('#tracks').empty())
     , $tbody = $('<tbody>')
 
@@ -41,14 +42,14 @@ Player.loadTracks = function loadTracks(tracks, cb) {
     $tbody.find('#'+ Player.currentTrack._id).addClass('active')
   }
 
-  if (cb) cb()
+  if (typeof cb == 'function') cb()
 }
 
 Player.loadArtists = function(artists) {
   var $artists = $('<ul>').appendTo($('#artists').empty())
 
   $artists.append($('<li class="active">Show All</li>').click(function() {
-      Player.loadTracks(Player._tracks)
+      loadTracks(Player._tracks)
       $artists.children().removeClass('active')
 
       nm.utils.Query.set('artist', null)
@@ -60,7 +61,7 @@ Player.loadArtists = function(artists) {
     var $li = $('<li id="'+ artist._id +'">'+ artist.name +'</li>')
 
     $li.data('artist', artist).click(function() {
-      $.getJSON('/tracks/artist/'+ artist._id, Player.loadTracks)
+      $.getJSON('/tracks/artist/'+ artist._id, loadTracks)
 
       nm.utils.Query.set('artist', artist._id)
 
@@ -82,7 +83,7 @@ Player.loadAlbums = function(albums) {
   var $albums = $('<ul>').appendTo($('#albums').empty())
 
   $albums.append($('<li class="active">Show All</li>').click(function() {
-      $.getJSON('/tracks/all', Player.loadTracks)
+      $.getJSON('/tracks/all', loadTracks)
       $albums.children().removeClass('active')
 
       nm.utils.Query.set('album', null)
@@ -94,7 +95,7 @@ Player.loadAlbums = function(albums) {
     var $li = $('<li>'+ album.title +'</li>')
 
     $li.data('album', album).click(function() {
-      $.getJSON('/tracks/album/'+ album._id, Player.loadTracks)
+      $.getJSON('/tracks/album/'+ album._id, loadTracks)
 
       nm.utils.Query.set('album', album._id)
 
@@ -133,10 +134,7 @@ function trackrow(track) {
 
 function stopPropagation(e) { e.stopPropagation() }
 
-var Player_load = Player.load
-Player.load = function(track) {
-  Player_load.call(this, track)
-
+Player.on('load', function(track) {
   $$('buffered').width(800)
 
   $('tr.active').removeClass('active')
@@ -152,17 +150,161 @@ Player.load = function(track) {
                      ].join(' '))
 
   document.title = $$('current').text()
+})
 
-  return this
+function createProgressbar() {
+  var audio      = Player.audio
+    , $audio     = $(audio)
+    , $progress  = $$('progress')
+    , $indicator = $('<div class="progress">')
+    , $waveform  = $('<img id="waveform">')
+    , $duration  = $('<div id="duration" class="h">')
+    , $time      = $('<div id="time" class="hi">')
+    , $remaining = $('<div id="remaining" class="h">')
+    , $buffered  = $('<div id="buffered">')
+
+  $indicator.append($time)
+            .append($remaining)
+
+  $progress.append($buffered)
+           .append($duration)
+           .append($indicator)
+           .append($waveform)
+           .click(function(e) {
+             audio.currentTime = (e.clientX - $waveform.offset().left)
+                               /  $waveform.width() * (audio.duration || Player.currentTrack.duration)
+           })
+
+  // I'm not sure why, but chromium sometimes won't trigger the progress event
+  $audio.on('timeupdate progress', nm.utils.throttle(function(e) {
+    var ranges   = this.buffered
+      , duration = this.duration
+      , width    = 800
+      , end      = 0
+      , i
+
+    for (i = ranges.length; i--;) {
+      end = Math.max(ranges.end(i), end)
+    }
+
+    $buffered.width(width - width / duration * end)
+  }, 500))
+
+  ;(function() {
+    var $time  = $('<div class="hovertime">')
+      , $hover = $('<div class="hover">').append($time)
+
+    $progress.mouseenter(function() {
+      $progress.append($hover)
+    })
+
+    $progress.mousemove(nm.utils.throttle(function(e) {
+      var x = e.clientX - $waveform.offset().left
+
+      $hover.width(x)
+
+      $time.text(nm.utils.formatTime((audio.duration || Player.currentTrack.duration) / $waveform.width() * x))
+    }, 25))
+
+    $progress.mouseleave(function() {
+      $hover.remove()
+    })
+  })()
+
+  $audio.on('durationchange', function() {
+    $duration.text(nm.utils.formatTime(audio.duration))
+  })
+
+  $audio.on('timeupdate', nm.utils.throttle(function() {
+    var currentTime = this.currentTime
+      , duration    = this.duration
+
+    $indicator.width(~~($waveform.width() / (duration || Player.currentTrack.duration) * currentTime))
+    $time.text(nm.utils.formatTime(currentTime))
+    $remaining.text(nm.utils.formatTime(currentTime - (duration || Player.currentTrack.duration)))
+  }, 500))
 }
 
-Player.getAllTracks(function() {
+// Get this thing started! :)
+
+Player.getAllTracks(function(err, tracks) {
+  loadTracks(tracks)
+
   var query = nm.utils.fromQuery(location.hash.slice(1))
 
   if (query.track) {
-    $('#tracks').animate({'scrollTop': $$(query.track).click().position().top - $('#tracks').height() / 2})
+    Player.play(query.track)
+
+    $('#tracks').animate({'scrollTop': $$(query.track).position().top - $('#tracks').height() / 2})
   }
 })
+
 Player.bind()
+
+$$('play').toggleClass('paused', Player.audio.paused)
+          .click(function() { Player.play() })
+
+$(Player.audio).on('play pause', function() {
+  var label = this.paused ? 'Play' : 'Pause'
+    , $play = $$('play').toggleClass('paused', this.paused)
+                        .text(label)
+
+
+  if ($.ui) {
+    $play.button({ 'icons': { 'primary': this.paused
+                                       ? 'ui-icon-play'
+                                       : 'ui-icon-pause' }
+                 , 'label': label })
+  }
+})
+
+$(Player.audio).click(function(e) {
+  e.preventDefault()
+
+  $(this).toggleClass('fullscreen')
+})
+
+var jQueryUI = '1.8.16'
+
+$('head').append('<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/themes/base/jquery-ui.css">')
+require(['//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min.js'], function() {
+  var audio = Player.audio
+
+  $$('back').button({ 'icons': { 'primary': 'ui-icon-seek-first' }, 'text': false })
+  $$('play').button({ 'icons': { 'primary': 'ui-icon-play'       }, 'text': false })
+  $$('next').button({ 'icons': { 'primary': 'ui-icon-seek-end'   }, 'text': false })
+  $$('shuffle').button().click(function() { Player.shuffle = !Player.shuffle })
+  $$('repeat').buttonset().on('click', 'input', function() {
+    Player.repeat = this.value || false
+  })
+
+  var steps   = 50
+    , volume  = audio.volume
+    , $volume = $$('volume').slider({
+        'value':  audio.volume * steps
+      , 'change': function(e, ui) {
+                    volume = ui.value / steps
+
+                    if (volume != audio.volume) audio.volume = volume
+                  }
+      , 'range':  'min'
+      , 'max':    steps
+    })
+
+  $(audio).on('volumechange', function() {
+    var volume = Math.round(audio.volume * steps) / steps
+
+    audio.volume = volume
+
+    if (volume * steps != $volume.slider('value')) {
+      $volume.slider('value', volume * steps)
+    }
+  })
+
+  // TODO: Remove this!
+  $('.download').button()
+})
+
+createProgressbar()
 
 })()

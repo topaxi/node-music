@@ -4,8 +4,8 @@ var window       = this
   , document     = window.document
   , location     = window.location
   , nm           = window.nm
-  , audio        = nm.el('video')
-  , Player       = nm.Player = { 'audio': audio }
+  , Player       = nm.Player = new nm.EventEmitter
+  , audio        = Player.audio = nm.el('video')
   , localStorage = window.localStorage
   , Math         = window.Math
 
@@ -35,19 +35,29 @@ Player.shuffle = false
 Player.repeat  = false
 
 Player.play = function(play) {
+  if (typeof play == 'string') return this.play(this.getTrackById(play))
   if (typeof play == 'object') return this.load(play).play(true)
 
   if (play === undefined) play = audio.paused
 
-  play === false
-    ? audio.pause()
-    : audio.play()
+  if (play === false) {
+    audio.pause()
+
+    this.emit('pause')
+  }
+  else {
+    audio.play()
+
+    this.emit('play')
+  }
 
   return this
 }
 
 Player.back = function() {
   window.history.back()
+
+  this.emit('back')
 }
 
 Player.next = function() {
@@ -71,6 +81,8 @@ Player.next = function() {
       $$('tracks').find('tbody').children().eq(0).click()
     }
   }
+
+  Player.emit('next')
 }
 
 /**
@@ -102,106 +114,15 @@ Player.load = function(track) {
 
   nm.utils.Query.set('track', track._id)
 
+  this.emit('load', track)
+
   return this
 }
 
-function createProgressbar() {
-  var $audio     = $(audio)
-    , $progress  = $$('progress')
-    , $indicator = $('<div class="progress">')
-    , $waveform  = $('<img id="waveform">')
-    , $duration  = $('<div id="duration" class="h">')
-    , $time      = $('<div id="time" class="hi">')
-    , $remaining = $('<div id="remaining" class="h">')
-    , $buffered  = $('<div id="buffered">')
-
-  $indicator.append($time)
-            .append($remaining)
-
-  $progress.append($buffered)
-           .append($duration)
-           .append($indicator)
-           .append($waveform)
-           .click(function(e) {
-             audio.currentTime = (e.clientX - $waveform.offset().left)
-                               /  $waveform.width() * (audio.duration || Player.currentTrack.duration)
-           })
-
-  // I'm not sure why, but chromium sometimes won't trigger the progress event
-  $audio.on('timeupdate progress', throttle(function(e) {
-    var ranges   = this.buffered
-      , duration = this.duration
-      , width    = 800
-      , end      = 0
-      , i
-
-    for (i = ranges.length; i--;) {
-      end = Math.max(ranges.end(i), end)
-    }
-
-    $buffered.width(width - width / duration * end)
-  }, 500))
-
-  ;(function() {
-    var $time  = $('<div class="hovertime">')
-      , $hover = $('<div class="hover">').append($time)
-
-    $progress.mouseenter(function() {
-      $progress.append($hover)
-    })
-
-    $progress.mousemove(throttle(function(e) {
-      var x = e.clientX - $waveform.offset().left
-
-      $hover.width(x)
-
-      $time.text(nm.utils.formatTime((audio.duration || Player.currentTrack.duration) / $waveform.width() * x))
-    }, 25))
-
-    $progress.mouseleave(function() {
-      $hover.remove()
-    })
-  })()
-
-  $audio.on('durationchange', function() {
-    $duration.text(nm.utils.formatTime(audio.duration))
-  })
-
-  $audio.on('timeupdate', throttle(function() {
-    var currentTime = this.currentTime
-      , duration    = this.duration
-
-    $indicator.width(~~($waveform.width() / (duration || Player.currentTrack.duration) * currentTime))
-    $time.text(nm.utils.formatTime(currentTime))
-    $remaining.text(nm.utils.formatTime(currentTime - (duration || Player.currentTrack.duration)))
-  }, 500))
-}
-
-function throttle(fun, delay) {
-  var timer
-
-  return function(a) {
-    var argv    = arguments
-      , context = this
-
-    if (!timer) timer = setTimeout(function() {
-      var argc = argv.length
-
-      // Function#apply is more expensive than Function#call.
-      // Most of the time, throttle is called for events which
-      // pass only one argument, use Function#call for those :)
-      if (argc > 1)  fun.apply(context, argv)
-      else if (argc) fun.call(context, a)
-      else           fun.call(context)
-
-      timer = 0
-    }, delay)
-  }
-}
-
 Player.bind = function() {
-  this.shuffle = $$('shuffle').is(':checked')
-  this.repeat  = $$('repeat').find('input:checked').val() || false
+  nm.bind(audio, 'volumechange', function() {
+    localStorage.volume = audio.volume
+  })
 
   nm.bind(audio, 'ended', function() {
     if (Player.repeat == 'once') {
@@ -212,41 +133,23 @@ Player.bind = function() {
     }
   })
 
-  $$('video').append(audio)
+  var repeat = document.getElementsByName('repeat')
 
-  $$('play').toggleClass('paused', audio.paused)
-            .click(function() { Player.play() })
-
-  $(audio).on('play pause', function() {
-    var label = audio.paused ? 'Play' : 'Pause'
-      , $play = $$('play').toggleClass('paused', audio.paused)
-                          .text(label)
-
-
-    if ($.ui) {
-      $play.button({ 'icons': { 'primary': audio.paused
-                                         ? 'ui-icon-play'
-                                         : 'ui-icon-pause' }
-                   , 'label': label })
+  for (var i = 0, l = repeat.length; i < l; ++i) {
+    if (repeat[i].checked) {
+      this.repeat = repeat[i].value || false; break
     }
+  }
+
+  this.shuffle = document.getElementById('shuffle').checked
+
+  ;['back', 'next'].forEach(function(action) {
+    nm.bind(document.getElementById(action), 'click', function() {
+      Player[action]()
+    })
   })
 
-  $$('back').click(function() { Player.back() })
-  $$('next').click(function() { Player.next() })
-
-  $(audio).click(function(e) {
-    e.preventDefault()
-
-    $(this).toggleClass('fullscreen')
-  })
-
-  $(audio).on('volumechange', function() {
-    localStorage.volume = audio.volume
-  })
-
-  createProgressbar()
-
-  $(document).on('keyup', function(e) {
+  nm.bind(document, 'keyup', function(e) {
     switch (e.keyCode) {
       case 37: Player.back(); break
       case 38: Player.stop(); break
@@ -255,54 +158,19 @@ Player.bind = function() {
     }
   })
 
-  var jQueryUI = '1.8.16'
+  document.getElementById('video').appendChild(audio)
 
-  $('head').append('<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/themes/base/jquery-ui.css">')
-  require(['//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min.js'], function() {
-    $$('back').button({ 'icons': { 'primary': 'ui-icon-seek-first' }, 'text': false })
-    $$('play').button({ 'icons': { 'primary': 'ui-icon-play'       }, 'text': false })
-    $$('next').button({ 'icons': { 'primary': 'ui-icon-seek-end'   }, 'text': false })
-    $$('shuffle').button().click(function() { Player.shuffle = !Player.shuffle })
-    $$('repeat').buttonset().on('click', 'input', function() {
-      Player.repeat = this.value || false
-    })
-
-    var steps   = 50
-      , volume  = audio.volume
-      , $volume = $$('volume').slider({
-          'value':  audio.volume * steps
-        , 'change': function(e, ui) {
-                      volume = ui.value / steps
-
-                      if (volume != audio.volume) audio.volume = volume
-                    }
-        , 'range':  'min'
-        , 'max':    steps
-      })
-
-    $(audio).on('volumechange', function() {
-      var volume = Math.round(audio.volume * steps) / steps
-
-      audio.volume = volume
-
-      if (volume * steps != $volume.slider('value')) {
-        $volume.slider('value', volume * steps)
-      }
-    })
-
-    // TODO: Remove this!
-    $('.download').button()
-  })
-
-  $(window).on('hashchange', function() {
+  nm.bind(window, 'hashchange', function() {
     if (location.hash) {
       var trackId = nm.utils.Query.get('track')
 
       if (Player.currentTrack._id != trackId) {
-        $$(trackId).click()
+        Player.play(trackId)
       }
     }
   })
+
+  this.emit('ready')
 }
 
 function populateTrack(track) {
@@ -373,10 +241,18 @@ Player.getAllTracks = function(cb) {
   function populate() {
     self._tracks = tracks = tracks.map(populateTrack)
 
-    self.loadTracks(tracks)
-
     cb(null, tracks)
   }
+}
+
+Player.getTrackById = function(trackId) {
+  var tracks = this._tracks
+
+  for (var i = tracks.length; i--;) {
+    if (tracks[i]._id == trackId) return tracks[i]
+  }
+
+  return null
 }
 
 }())

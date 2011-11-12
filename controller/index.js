@@ -6,7 +6,7 @@ module.exports = function(http) {
   http.get('/', function(req, res) {
     res.render('index', {
         'title': 'node-music'
-      , 'theme': 'default'
+      , 'theme': req.browser.mobile ? 'mobile' : 'default'
     })
   })
 

@@ -5,7 +5,6 @@
 var window         = this
   , JSON           = window.JSON
   , location       = window.location
-  , sessionStorage = window.sessionStorage
   , Math           = window.Math
   , nm             = window.nm
   , Player         = nm.Player
@@ -135,6 +134,8 @@ function trackrow(track) {
 function stopPropagation(e) { e.stopPropagation() }
 
 Player.on('load', function(track) {
+  nm.utils.Query.set('track', track._id)
+
   $$('buffered').width(800)
 
   $('tr.active').removeClass('active')
@@ -240,6 +241,8 @@ Player.getAllTracks(function(err, tracks) {
 })
 
 Player.bind()
+
+document.getElementById('video').appendChild(Player.audio)
 
 $$('play').toggleClass('paused', Player.audio.paused)
           .click(function() { Player.play() })

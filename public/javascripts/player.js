@@ -28,7 +28,11 @@ Player._queue = []
 Player._queueIndex = 0
 
 Player.queue = function(track) {
+  if (typeof track == 'string') return this.queue(this.getTrackById(track))
+
   Player._queue.push(track)
+
+  return this
 }
 
 Player.shuffle = false
@@ -112,8 +116,6 @@ Player.load = function(track) {
   sources(audio, track)
   audio.load()
 
-  nm.utils.Query.set('track', track._id)
-
   this.emit('load', track)
 
   return this
@@ -133,15 +135,16 @@ Player.bind = function() {
     }
   })
 
-  var repeat = document.getElementsByName('repeat')
+  var repeat   = document.getElementsByName('repeat')
+    , shuffle  = document.getElementById('shuffle')
+
+  if (shuffle) this.shuffle = shuffle.checked
 
   for (var i = 0, l = repeat.length; i < l; ++i) {
     if (repeat[i].checked) {
       this.repeat = repeat[i].value || false; break
     }
   }
-
-  this.shuffle = document.getElementById('shuffle').checked
 
   ;['back', 'next'].forEach(function(action) {
     nm.bind(document.getElementById(action), 'click', function() {
@@ -157,8 +160,6 @@ Player.bind = function() {
       case 40: Player.play(); break
     }
   })
-
-  document.getElementById('video').appendChild(audio)
 
   nm.bind(window, 'hashchange', function() {
     if (location.hash) {
@@ -212,9 +213,11 @@ Player.getAllArtists = function(cb) {
   if (self._artists) return cb(null, self._artists)
 
   nm.getJSON('/artists/all', function(err, artists) {
+    self._artists = artists
+
     self.loadArtists(artists)
 
-    cb(err, self._artists = artists)
+    cb(err, artists)
   })
 }
 
@@ -241,6 +244,8 @@ Player.getAllTracks = function(cb) {
   function populate() {
     self._tracks = tracks = tracks.map(populateTrack)
 
+    self.loadTracks(tracks)
+
     cb(null, tracks)
   }
 }
@@ -254,5 +259,19 @@ Player.getTrackById = function(trackId) {
 
   return null
 }
+
+Player.getArtistById = function(artistId) {
+  var artists = this._artists
+
+  for (var i = artists.length; i--;) {
+    if (artists[i]._id == trackId) return artists[i]
+  }
+
+  return null
+}
+
+Player.loadAlbums  = nm.noop
+Player.loadArtists = nm.noop
+Player.loadTracks  = nm.noop
 
 }())

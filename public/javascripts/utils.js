@@ -9,6 +9,8 @@ var window         = this
   , Query          = {}
 
 nm.bind = function(el, events, fun) {
+  if (!el) return
+
   events = events.split(' ')
 
   for (var i = 0, l = events.length; i < l; ++i) {

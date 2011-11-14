@@ -5,7 +5,7 @@ var window       = this
   , location     = window.location
   , nm           = window.nm
   , Player       = nm.Player = new nm.EventEmitter
-  , audio        = Player.audio = nm.el('video')
+  , audio        = Player.audio = nm.el(nm.theme == 'mobile' ? 'audio' : 'video')
   , localStorage = window.localStorage
   , Math         = window.Math
 

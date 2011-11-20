@@ -18,6 +18,7 @@ else {
 
 audio.autobuffer = true
 audio.controls   = false
+audio.preload    = 'auto'
 
 //audio.addEventListener('play', function() {
 //  document.title = '▶ '+ document.title
@@ -198,10 +199,12 @@ Player.getAllAlbums = function(cb) {
 
   if (self._albums) return cb(null, self._albums)
 
-  nm.getJSON('/albums/all', function(err, albums) {
-    self.loadAlbums(albums)
+  nm.request('/albums/all', function(res) {
+    if (!res.error) {
+      self.loadAlbums(self._albums = res.body)
+    }
 
-    cb(err, self._albums = albums)
+    cb(res.error ? res : null, res.body)
   })
 }
 
@@ -212,12 +215,12 @@ Player.getAllArtists = function(cb) {
 
   if (self._artists) return cb(null, self._artists)
 
-  nm.getJSON('/artists/all', function(err, artists) {
-    self._artists = artists
+  nm.request('/artists/all', function(res) {
+    if (!res.error) {
+      self.loadArtists(self._artists = res.body)
+    }
 
-    self.loadArtists(artists)
-
-    cb(err, artists)
+    cb(res.error ? res : null, res.body)
   })
 }
 
@@ -230,10 +233,10 @@ Player.getAllTracks = function(cb) {
     , c    = 3
     , tracks
 
-  nm.getJSON('/tracks/all', function(err, t) {
-    if (err) return cb(err)
+  nm.request('/tracks/all', function(res) {
+    if (res.error) return cb(res)
 
-    tracks = t
+    tracks = res.body
 
     if (!--c) populate()
   })

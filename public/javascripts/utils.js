@@ -1,12 +1,13 @@
 ;(function(undefined) {
 
-var window         = this
-  , document       = window.document
-  , location       = window.location
-  , XMLHttpRequest = window.XMLHttpRequest
-  , JSON           = window.JSON
-  , nm             = window.nm
-  , Query          = {}
+var window    = this
+  , document  = window.document
+  , location  = window.location
+  , navigator = window.navigator
+  , JSON      = window.JSON
+  , nm        = window.nm
+  , utils     = nm.utils = {}
+  , Query     = {}
 
 nm.bind = function(el, events, fun) {
   if (!el) return
@@ -20,43 +21,18 @@ nm.bind = function(el, events, fun) {
   return el
 }
 
-nm.get = function(url, fun, type) {
-  var req = new XMLHttpRequest
-
-  req.open('GET', url, true)
-
-  nm.bind(req, 'readystatechange', function () {
-    if (req.readyState == 4) {
-      if (req.status == 200) {
-        fun(null, type == 'json' ? JSON.parse(req.responseText) : req.responseText)
-      }
-      else {
-        fun(new Error(req.statusText))
-      }
-    }
-  })
-
-  req.send()
-
-  return req
-}
-
-nm.getJSON = function(url, fun) { nm.get(url, fun, 'json') }
-
 window.$$ = function $$(id) {
   return jQuery(document.getElementById(id))
 }
 
-nm.utils = {}
-
 Query.get = function(n) {
   if (location.hash.length <= 1) return null
 
-  return nm.utils.fromQuery(location.hash.slice(1))[n]
+  return utils.fromQuery(location.hash.slice(1))[n]
 }
 
 Query.set = function(n, v) {
-  var query = nm.utils.fromQuery(location.hash.slice(1))
+  var query = utils.fromQuery(location.hash.slice(1))
 
   if (v === null || v === undefined) {
     delete query[n]
@@ -65,13 +41,13 @@ Query.set = function(n, v) {
     query[n] = v
   }
 
-  location.hash = nm.utils.toQuery(query)
+  location.hash = utils.toQuery(query)
 
   return this
 }
 
-nm.utils.Query = Query
-nm.utils.fromQuery = function fromQuery(q) {
+utils.Query = Query
+utils.fromQuery = function fromQuery(q) {
   if (!(q = q.trim())) return {}
 
   return q.split('&').reduce(function(a, b) {
@@ -93,21 +69,21 @@ nm.utils.fromQuery = function fromQuery(q) {
 }
 
 // Using jQuery for now
-nm.utils.toQuery = function() { return jQuery.param.apply(jQuery, arguments) }
+utils.toQuery = function() { return jQuery.param.apply(jQuery, arguments) }
 
-nm.utils.pad = function pad(n, d) {
+utils.pad = function pad(n, d) {
   for (n = ''+ (n >>> 0); n.length < d;) n = '0'+ n; return n
 }
 
-nm.utils.formatTime = function formatTime(seconds) {
+utils.formatTime = function formatTime(seconds) {
   var m = seconds < 0
 
   if (m) seconds = Math.abs(seconds)
 
-  return (m ? '-' : '') + nm.utils.pad(seconds / 60, 2) +':'+ nm.utils.pad(seconds % 60, 2)
+  return (m ? '-' : '') + utils.pad(seconds / 60, 2) +':'+ utils.pad(seconds % 60, 2)
 }
 
-nm.utils.throttle = function(fun, delay) {
+utils.throttle = function(fun, delay) {
   var timer
 
   return function(a) {
@@ -128,5 +104,70 @@ nm.utils.throttle = function(fun, delay) {
     }, delay)
   }
 }
+
+utils.gravatar = {}
+utils.gravatar.getAvatar = function(email, size) {
+  email += ''
+
+  return 'http://www.gravatar.com/avatar/' +
+    Crypto.MD5(email.trim().toLowerCase()) +
+    "?s=" + (+size || 32)
+}
+
+var login = utils.login = new nm.EventEmitter
+
+login.show = function() {
+  navigator.id.getVerifiedEmail(function(assertion) {
+    if (!assertion) {
+      login.emit('loggedOut')
+
+      return
+    }
+
+    nm.request.post('/login')
+              .data({ 'assertion': assertion, 'test': 'hoi' })
+              .end(function(res) {
+                if (!res) return login.emit('loggedOut')
+
+                login.emit('loggedIn', res)
+              })
+  })
+}
+
+login.whoami = function() {
+  login.loggedIn = false
+
+  nm.request.post('/login/whoami', null, function(res) {
+    if (res.error) return login.emit('error', res)
+    if (!res.text) return login.emit('loggedOut')
+
+    login.loggedIn = true
+    login.emit('loggedIn', res.text, true)
+  })
+}
+
+nm.bind(document, 'login', function(e) {
+  navigator.id.getVerifiedEmail(function(assertion) {
+    if (!assertion) {
+      login.emit('loggedOut')
+
+      return
+    }
+
+    nm.request.post('/login')
+              .data({ 'assertion': assertion })
+              .end(function(res) {
+                if (!res) return login.emit('loggedOut')
+
+                login.emit('loggedIn', res)
+              })
+  })
+})
+
+nm.bind(document, 'logout', function(e) {
+  nm.request.post('/login/logout', function(res) {
+    login.emit('loggedOut')
+  })
+})
 
 })()

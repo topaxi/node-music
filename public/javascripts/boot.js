@@ -20,10 +20,21 @@ nm.el = function(name, className) {
   return el
 }
 
-require(['//ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js', 'utils', 'player'], function() {
+var essentials = [ 'https://browserid.org/include.js'
+                 , 'https://crypto-js.googlecode.com/files/2.3.0-crypto-md5.js'
+                 , 'superagent.min'
+                 , 'utils'
+                 , 'player'
+                 ]
+
+require(essentials, function() {
+  nm.request = window.superagent
+
   require.config({ 'baseUrl': '/theme/'+ nm.theme +'/js' })
 
-  require(['/theme/'+ nm.theme +'/main.js'])
+  require(['/theme/'+ nm.theme +'/main.js'], function() {
+    nm.utils.login.whoami()
+  })
 })
 
 /*!

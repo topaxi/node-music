@@ -12,9 +12,9 @@ var window     = this
 
 document.body.innerHTML = '<div data-role="header" id="hdrProgress" data-nobackbtn="true"><h1>Processing...</h1></div><div data-role="content" id="contentProgress"><div align="CENTER"><h4>Please wait.</h4></div></div><div data-role="footer" id="ftrProgress"></div>'
 
-$(document.head).append('<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.css">')
+$(document.head).append('<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css">')
 
-require(['http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.js'])
+require(['http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js'])
 
 Player.getAllTracks(function(err, tracks) {
   var artists = Player._artists
@@ -101,83 +101,85 @@ function createArtistPage(artist) {
   $(document.body).append($artist)
 }
 
-Player.bind()
+require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js'], function() {
+  var $ = window.jQuery
 
-$('body').append('<div id="progress">')
+  Player.bind()
 
-createProgressbar()
+  createProgressbar()
 
-function createProgressbar() {
-  var audio      = Player.audio
-    , $audio     = $(audio)
-    , $progress  = $$('progress')
-    , $indicator = $('<div class="progress">')
-    , $waveform  = $('<img id="waveform">')
-    , $duration  = $('<div id="duration" class="h">')
-    , $time      = $('<div id="time" class="hi">')
-    , $remaining = $('<div id="remaining" class="h">')
-    , $buffered  = $('<div id="buffered">')
+  function createProgressbar() {
+    var audio      = Player.audio
+      , $audio     = $(audio)
+      , $progress  = $$('progress')
+      , $indicator = $('<div class="progress">')
+      , $waveform  = $('<img id="waveform">')
+      , $duration  = $('<div id="duration" class="h">')
+      , $time      = $('<div id="time" class="hi">')
+      , $remaining = $('<div id="remaining" class="h">')
+      , $buffered  = $('<div id="buffered">')
 
-  $indicator.append($time)
-            .append($remaining)
+    $indicator.append($time)
+              .append($remaining)
 
-  $progress.append($buffered)
-           .append($duration)
-           .append($indicator)
-           .append($waveform)
-           .click(function(e) {
-             audio.currentTime = (e.clientX - $waveform.offset().left)
-                               /  $waveform.width() * (audio.duration || Player.currentTrack.duration)
-           })
+    $progress.append($buffered)
+             .append($duration)
+             .append($indicator)
+             .append($waveform)
+             .click(function(e) {
+               audio.currentTime = (e.clientX - $waveform.offset().left)
+                                 /  $waveform.width() * (audio.duration || Player.currentTrack.duration)
+             })
 
-  // I'm not sure why, but chromium sometimes won't trigger the progress event
-  $audio.on('timeupdate progress', nm.utils.throttle(function(e) {
-    var ranges   = this.buffered
-      , duration = this.duration
-      , width    = 800
-      , end      = 0
-      , i
+    // I'm not sure why, but chromium sometimes won't trigger the progress event
+    $audio.on('timeupdate progress', nm.utils.throttle(function(e) {
+      var ranges   = this.buffered
+        , duration = this.duration
+        , width    = 800
+        , end      = 0
+        , i
 
-    for (i = ranges.length; i--;) {
-      end = Math.max(ranges.end(i), end)
-    }
+      for (i = ranges.length; i--;) {
+        end = Math.max(ranges.end(i), end)
+      }
 
-    $buffered.width(width - width / duration * end)
-  }, 500))
+      $buffered.width(width - width / duration * end)
+    }, 500))
 
-  ;(function() {
-    var $time  = $('<div class="hovertime">')
-      , $hover = $('<div class="hover">').append($time)
+    ;(function() {
+      var $time  = $('<div class="hovertime">')
+        , $hover = $('<div class="hover">').append($time)
 
-    $progress.mouseenter(function() {
-      $progress.append($hover)
+      $progress.mouseenter(function() {
+        $progress.append($hover)
+      })
+
+      $progress.mousemove(nm.utils.throttle(function(e) {
+        var x = e.clientX - $waveform.offset().left
+
+        $hover.width(x)
+
+        $time.text(nm.utils.formatTime((audio.duration || Player.currentTrack.duration) / $waveform.width() * x))
+      }, 25))
+
+      $progress.mouseleave(function() {
+        $hover.remove()
+      })
+    })()
+
+    $audio.on('durationchange', function() {
+      $duration.text(nm.utils.formatTime(audio.duration))
     })
 
-    $progress.mousemove(nm.utils.throttle(function(e) {
-      var x = e.clientX - $waveform.offset().left
+    $audio.on('timeupdate', nm.utils.throttle(function() {
+      var currentTime = this.currentTime
+        , duration    = this.duration
 
-      $hover.width(x)
-
-      $time.text(nm.utils.formatTime((audio.duration || Player.currentTrack.duration) / $waveform.width() * x))
-    }, 25))
-
-    $progress.mouseleave(function() {
-      $hover.remove()
-    })
-  })()
-
-  $audio.on('durationchange', function() {
-    $duration.text(nm.utils.formatTime(audio.duration))
-  })
-
-  $audio.on('timeupdate', nm.utils.throttle(function() {
-    var currentTime = this.currentTime
-      , duration    = this.duration
-
-    $indicator.width(~~($waveform.width() / (duration || Player.currentTrack.duration) * currentTime))
-    $time.text(nm.utils.formatTime(currentTime))
-    $remaining.text(nm.utils.formatTime(currentTime - (duration || Player.currentTrack.duration)))
-  }, 500))
-}
+      $indicator.width(~~($waveform.width() / (duration || Player.currentTrack.duration) * currentTime))
+      $time.text(nm.utils.formatTime(currentTime))
+      $remaining.text(nm.utils.formatTime(currentTime - (duration || Player.currentTrack.duration)))
+    }, 500))
+  }
+})
 
 })()

@@ -4,6 +4,7 @@ body {
 
 a {
   color: #00b7ff;
+  cursor: pointer;
 }
 
 td { cursor: pointer; text-overflow: ellipsis; white-space: nowrap }
@@ -209,6 +210,12 @@ tr:nth-child(even), th {
 }
 
 #tracks table { width: 100% }
+
+#login, #avatar {
+  right: 200px;
+  top: 0;
+  position: absolute;
+}
 
 /*
 #tracks thead tr {

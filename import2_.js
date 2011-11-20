@@ -8,7 +8,6 @@ var options = { 'library':   './public/music'
                              }
               }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 
 var fs         = require('fs')
@@ -17,7 +16,6 @@ var fs         = require('fs')
   , flows      = require('streamline/lib/util/flows')
   , future     = require('streamline/lib/util/future').future
   , readSync   = require('./lib/fs').recursiveReaddirSync
-  , waveform   = require('./lib/waveform')
   , getWavInfo = require('./lib/convert').getWavInfo
   , fileFunnel = flows.funnel(20)
   , cpuFunnel  = flows.funnel(require('os').cpus().length - 1 || 1)
@@ -76,12 +74,11 @@ flows.each(_, files, function(_, path, i) {
 
     if (!pngExists) {
       console.log(prefix, 'drawing waveform...')
-      waveform.draw(wave, options.waveform)
-              .savePng(pngPath, 9, function(err) {
-                if (err) throw err
+      track.drawWaveform(wave, options.waveform, function(err) {
+        if (err) throw err
 
-                console.log(prefix, 'waveform saved', pngPath)
-              })
+        console.log(prefix, 'waveform saved', pngPath)
+      })
     }
   }
 })

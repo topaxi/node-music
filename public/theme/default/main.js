@@ -2,12 +2,12 @@
 // finished loading and the DOM is ready
 ;(function(undefined) {
 
-var window         = this
-  , JSON           = window.JSON
-  , location       = window.location
-  , Math           = window.Math
-  , nm             = window.nm
-  , Player         = nm.Player
+var window   = this
+  , JSON     = window.JSON
+  , location = window.location
+  , Math     = window.Math
+  , nm       = window.nm
+  , Player   = nm.Player
 
 function loadTracks(tracks, cb) {
   var $table = $('<table>').appendTo($('#tracks').empty())
@@ -226,88 +226,132 @@ function createProgressbar() {
   }, 500))
 }
 
-// Get this thing started! :)
+// Load jQuery and get this thing started! :)
+require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js'], function() {
+  var $ = window.jQuery
 
-Player.getAllTracks(function(err, tracks) {
-  loadTracks(tracks)
+  Player.getAllTracks(function(err, tracks) {
+    loadTracks(tracks)
 
-  var query = nm.utils.fromQuery(location.hash.slice(1))
+    var query = nm.utils.fromQuery(location.hash.slice(1))
 
-  if (query.track) {
-    Player.play(query.track)
+    if (query.track) {
+      Player.play(query.track)
 
-    $('#tracks').animate({'scrollTop': $$(query.track).position().top - $('#tracks').height() / 2})
-  }
-})
-
-Player.bind()
-
-document.getElementById('video').appendChild(Player.audio)
-
-$$('play').toggleClass('paused', Player.audio.paused)
-          .click(function() { Player.play() })
-
-$(Player.audio).on('play pause', function() {
-  var label = this.paused ? 'Play' : 'Pause'
-    , $play = $$('play').toggleClass('paused', this.paused)
-                        .text(label)
-
-
-  if ($.ui) {
-    $play.button({ 'icons': { 'primary': this.paused
-                                       ? 'ui-icon-play'
-                                       : 'ui-icon-pause' }
-                 , 'label': label })
-  }
-})
-
-$(Player.audio).click(function(e) {
-  e.preventDefault()
-
-  $(this).toggleClass('fullscreen')
-})
-
-var jQueryUI = '1.8.16'
-
-$('head').append('<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/themes/base/jquery-ui.css">')
-require(['//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min.js'], function() {
-  var audio = Player.audio
-
-  $$('back').button({ 'icons': { 'primary': 'ui-icon-seek-first' }, 'text': false })
-  $$('play').button({ 'icons': { 'primary': 'ui-icon-play'       }, 'text': false })
-  $$('next').button({ 'icons': { 'primary': 'ui-icon-seek-end'   }, 'text': false })
-  $$('shuffle').button().click(function() { Player.shuffle = !Player.shuffle })
-  $$('repeat').buttonset().on('click', 'input', function() {
-    Player.repeat = this.value || false
-  })
-
-  var steps   = 50
-    , volume  = audio.volume
-    , $volume = $$('volume').slider({
-        'value':  audio.volume * steps
-      , 'change': function(e, ui) {
-                    volume = ui.value / steps
-
-                    if (volume != audio.volume) audio.volume = volume
-                  }
-      , 'range':  'min'
-      , 'max':    steps
-    })
-
-  $(audio).on('volumechange', function() {
-    var volume = Math.round(audio.volume * steps) / steps
-
-    audio.volume = volume
-
-    if (volume * steps != $volume.slider('value')) {
-      $volume.slider('value', volume * steps)
+      $('#tracks').animate({'scrollTop': $$(query.track).position().top - $('#tracks').height() / 2})
     }
   })
 
-  // TODO: Remove this!
-  $('.download').button()
+  Player.bind()
+
+  document.getElementById('video').appendChild(Player.audio)
+
+  $$('play').toggleClass('paused', Player.audio.paused)
+            .click(function() { Player.play() })
+
+  $(Player.audio).on('play pause', function() {
+    var label = this.paused ? 'Play' : 'Pause'
+      , $play = $$('play').toggleClass('paused', this.paused)
+                          .text(label)
+
+
+    if ($.ui) {
+      $play.button({ 'icons': { 'primary': this.paused
+                                         ? 'ui-icon-play'
+                                         : 'ui-icon-pause' }
+                   , 'label': label })
+    }
+  })
+
+  $(Player.audio).click(function(e) {
+    e.preventDefault()
+
+    $(this).toggleClass('fullscreen')
+  })
+
+  var jQueryUI = '1.8.16'
+
+  $('head').append('<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/themes/base/jquery-ui.css">')
+  require(['//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min.js'], function() {
+    var audio = Player.audio
+
+    $$('back').button({ 'icons': { 'primary': 'ui-icon-seek-first' }, 'text': false })
+    $$('play').button({ 'icons': { 'primary': 'ui-icon-play'       }, 'text': false })
+    $$('next').button({ 'icons': { 'primary': 'ui-icon-seek-end'   }, 'text': false })
+    $$('shuffle').button().click(function() { Player.shuffle = !Player.shuffle })
+    $$('repeat').buttonset().on('click', 'input', function() {
+      Player.repeat = this.value || false
+    })
+
+    var steps   = 50
+      , volume  = audio.volume
+      , $volume = $$('volume').slider({
+          'value':  audio.volume * steps
+        , 'change': function(e, ui) {
+                      volume = ui.value / steps
+
+                      if (volume != audio.volume) audio.volume = volume
+                    }
+        , 'range':  'min'
+        , 'max':    steps
+      })
+
+    $(audio).on('volumechange', function() {
+      var volume = Math.round(audio.volume * steps) / steps
+
+      audio.volume = volume
+
+      if (volume * steps != $volume.slider('value')) {
+        $volume.slider('value', volume * steps)
+      }
+    })
+
+    // TODO: Remove this!
+    $('.download').button()
+  })
+
+  createProgressbar()
+
+  //if (nm.utils.login.loggedIn) {
+  //  loggedIn()
+  //}
+  //else {
+  //  loggedOut()
+  //}
 })
 
-createProgressbar()
+function loggedOut() {
+  // TODO: halp
+  if (typeof $ == 'undefined') {
+    return setTimeout(function() { loggedOut() }, 500)
+  }
+
+  $('#avatar').remove()
+
+  $('<a id="login"><img alt="Sign in" src="https://browserid.org/i/sign_in_blue.png"></a>').appendTo(document.body).click(function() {
+    nm.utils.login.show()
+  })
+}
+
+function loggedIn(email) {
+  // TODO: halp
+  if (typeof $ == 'undefined') {
+    return setTimeout(function() { loggedIn(email) }, 500)
+  }
+
+  $('#login').remove()
+
+  if (email) {
+    $('<img id="avatar">').prop('src', nm.utils.gravatar.getAvatar(email, 64))
+                          .appendTo(document.body)
+  }
+}
+
+nm.utils.login.on('loggedOut', loggedOut)
+nm.utils.login.on('loggedIn',  loggedIn)
+
+nm.utils.login.on('error', function() {
+  console.log('Authentication error!', arguments)
+})
 
 })()

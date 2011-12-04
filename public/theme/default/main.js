@@ -228,11 +228,13 @@ function createProgressbar() {
 }
 
 // Load jQuery and get this thing started! :)
-require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js'], function() {
+require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'], function() {
   var $ = window.jQuery
 
   Player.getAllTracks(function(err, tracks) {
-    loadTracks(tracks)
+    if (!nm.utils.Query.get('artist')) {
+      loadTracks(tracks)
+    }
 
     var query = nm.utils.fromQuery(location.hash.slice(1))
 

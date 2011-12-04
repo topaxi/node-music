@@ -2,12 +2,13 @@
 // finished loading and the DOM is ready
 ;(function(undefined) {
 
-var window   = this
-  , JSON     = window.JSON
-  , location = window.location
-  , Math     = window.Math
-  , nm       = window.nm
-  , Player   = nm.Player
+var window     = this
+  , setTimeout = window.setTimeout
+  , JSON       = window.JSON
+  , location   = window.location
+  , Math       = window.Math
+  , nm         = window.nm
+  , Player     = nm.Player
 
 function loadTracks(tracks, cb) {
   var $table = $('<table>').appendTo($('#tracks').empty())
@@ -142,7 +143,11 @@ Player.on('load', function(track) {
   $('tr.active').removeClass('active')
   $$(track._id).addClass('active')
 
-  $$('waveform').prop('src', '/wave/'+ track._id +'.png')
+  // Set blank gif first, the waveform might take a second to load
+  $$('waveform').prop('src', 'data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw%3D%3D')
+  setTimeout(function() {
+    $$('waveform').prop('src', '/wave/'+ track._id +'.png')
+  }, 1)
 
   $$('current').html([ '<strong>', track.title, '</strong><br>'
                      , '<span class="h">by</span>'

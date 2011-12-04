@@ -1,0 +1,8 @@
+{ "library":   "./public/music"
+, "forceTags": false
+, "waveform":  { "detail":   5
+               , "width":  1024
+               , "height":  128
+               , "color": [0, 48, 160]
+               }
+}

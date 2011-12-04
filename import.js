@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-var options = { 'library':   './public/music'
-              , 'forceTags': false // force tag reading, currently broken
-              , 'waveform':  { 'detail':   5 // higher means less detail
-                             , 'width':  1024
-                             , 'height':  128
-                             , 'color': [0, 48, 160]
-                             , 'overwrite': false
-                             }
-              }
+//var config = { 'library':   './public/music'
+//             , 'forceTags': false // force tag reading, currently broken
+//             , 'waveform':  { 'detail':   5 // higher means less detail
+//                            , 'width':  1024
+//                            , 'height':  128
+//                            , 'color': [0, 48, 160]
+//                            }
+//             }
+var config = require('./config.json')
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@ var fs         = require('fs')
   , path       = require('path')
   , mmd        = require('musicmetadata')
   , readSync   = require('./lib/fs').recursiveReaddirSync
-  , waveform   = require('./lib/waveform')
   , getWavInfo = require('./lib/convert').getWavInfo
 
 var Album  = require('./lib/model/Album')
@@ -28,7 +27,7 @@ var Album  = require('./lib/model/Album')
   , artists = {}
   , files   = []
 
-readSync(options.library, function(err, path) {
+readSync(config.library, function(err, path) {
   if (err) throw err
 
   files.push(path)
@@ -49,61 +48,28 @@ readSync(options.library, function(err, path) {
     getTrack(tags, function(err, track) {
       if (err) throw err
 
-      var pngPath = './public/wave/'+ track._id +'.png'
-
       console.log('imported', track.path)
 
-      if (options.waveform.overwrite) {
-        processWave(!track.duration, true)
+      if (track.duration) return importTrack(i)
 
-        return
-      }
+      getWavInfo(path, function(err, wave) {
+        if (err) throw err
 
-      fs.stat(pngPath, function(err) {
-        // Error occurred, asume file does not exist!
-        processWave(!track.duration, !!err)
-      })
+        track.duration = wave.subchunk2Size / wave.byteRate
 
-      function processWave(duration, draw) {
-        if (!duration && !draw) return importTrack(i)
+        track.save(function() {
+          console.log('track duration of %d saved', track.duration)
 
-        getWavInfo(path, function(err, wave) {
-          if (err) throw err
-
-          var c = 0
-
-          if (duration) c++
-          if (draw)     c++
-
-          if (duration) {
-            track.duration = wave.subchunk2Size / wave.byteRate
-
-            track.save(function() {
-              console.log('track duration of %d saved', track.duration)
-
-              if (!--c) importTrack(i)
-            })
-          }
-
-          if (draw) {
-            waveform.draw(wave, options.waveform)
-                    .savePng(pngPath, 9, function(err) {
-                      if (err) throw err
-
-                      console.log('waveform saved', pngPath)
-
-                      if (!--c) importTrack(i)
-                    })
-          }
+          importTrack(i)
         })
-      }
+      })
     })
   })
 })(0)
 
 function getTrack(tags, cb) {
   Track.findOne({ 'path': tags.path }, function(err, track) {
-    if (!options.forceTags && (err || track)) return cb(err, track)
+    if (!config.forceTags && (err || track)) return cb(err, track)
 
     getArtists(tags.artist, function(err, artists) {
       if (err) return cb(err, track)
@@ -142,7 +108,7 @@ function getAlbum(tags, cb) {
   if (albums[tags.album]) return cb(null, albums[tags.album])
 
   Album.findOne({'title': tags.album}, function(err, album) {
-    if (!options.forceTags && (err || album)) return cb(err, album)
+    if (!config.forceTags && (err || album)) return cb(err, album)
 
     if (!album) album = albums[tags.album] = new Album
 
@@ -157,7 +123,7 @@ function getArtist(name, cb) {
   if (artists[name]) return cb(null, artists[name])
 
   Artist.findOne({'name': name}, function(err, artist) {
-    if (!options.forceTags && (err || artist)) return cb(err, artist)
+    if (!config.forceTags && (err || artist)) return cb(err, artist)
 
     if (!artist) artist = artists[name] = new Artist
 
@@ -184,15 +150,6 @@ function getArtists(names, cb) {
 }
 
 function tags(path, cb) {
-  if (path == './public/music/Modestep/Modestep - To The Stars (Break The Noize & The Autobots Remix).mp4') {
-    return cb(null, {
-        'artist': ['Break The Noize', 'The Autobots']
-      , 'title':  'Modestep - To The Stars (Break The Noize & The Autobots Remix)'
-      , 'genre': ['Dubstep']
-      , 'year':  2011
-    })
-  }
-
   var s = fs.createReadStream(path)
     , p = new mmd(s)
 

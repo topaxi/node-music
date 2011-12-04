@@ -1,12 +1,12 @@
-var options = { 'library':   './public/music'
-              , 'forceTags': false // force tag reading, currently broken
-              , 'waveform':  { 'detail':   5 // higher means less detail
-                             , 'width':  1024
-                             , 'height':  128
-                             , 'color': [0, 48, 160]
-                             , 'overwrite': false
-                             }
-              }
+//var config = { 'library':   './public/music'
+//             , 'forceTags': false // force tag reading, currently broken
+//             , 'waveform':  { 'detail':   5 // higher means less detail
+//                            , 'width':  1024
+//                            , 'height':  128
+//                            , 'color': [0, 48, 160]
+//                            }
+//             }
+var config = require('./config.json')
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -28,14 +28,13 @@ var Album  = require('./lib/model/Album')
   , artists = {}
   , files   = []
 
-readSync(options.library, function(err, path) {
+readSync(config.library, function(err, path) {
   if (err) throw err
 
   files.push(path)
 })
 
-var count0r = 0
-
+// Wrap getWavInfo for futures support
 var _gwi = getWavInfo
 getWavInfo = function(file, cb) {
   if (!cb) return future(_gwi, arguments);
@@ -49,35 +48,21 @@ flows.each(_, files, function(_, path, i) {
   console.log('')
   console.log(prefix, 'importing', path)
 
-  var tags = readTags(path, _)
-
-  tags.path = path.replace('./public', '')
-
-  var track = getTrack(tags, _)
+  var track = getTrack(path, _)
 
   console.log(prefix, 'imported', track.path)
 
-  var pngPath   = './public/wave/'+ track._id +'.png'
-    , pngExists = options.waveform.overwrite ? false : fileExists(pngPath, _)
-
-  if (!pngExists || !track.duration) {
+  if (!track.duration) {
     var wave = getWavInfo(path, _)
 
     if (!track.duration) {
       track.duration = wave.subchunk2Size / wave.byteRate
 
       console.log(prefix, 'saving track duration...')
-      track.save(function() {
-        console.log(prefix, 'track duration of', track.duration, 'saved')
-      })
-    }
-
-    if (!pngExists) {
-      console.log(prefix, 'drawing waveform...')
-      track.drawWaveform(wave, options.waveform, function(err) {
+      track.save(function(err) {
         if (err) throw err
 
-        console.log(prefix, 'waveform saved', pngPath)
+        console.log(prefix, 'track duration of', track.duration, 'saved')
       })
     }
   }
@@ -90,52 +75,57 @@ function fileExists(file, _) {
     return true
   }
   catch (err) {
-    return false
+    if (err.code == 'ENOENT') return false
+
+    throw err
   }
 }
 
-function getTrack(tags, cb) {
-  Track.findOne({ 'path': tags.path }, function(err, track) {
-    if (!options.forceTags && (err || track)) return cb(err, track)
+function getTrack(path, _) {
+  // "./public" isn't available from the browser
+  var trackPath = path.replace('./public', '')
+    , track     = Track.findOne({ 'path': trackPath }, _)
 
-    getArtists(tags.artist, function(err, artists) {
-      if (err) return cb(err, track)
+  if (!config.forceTags && track) return track
 
-      if (!track) track = new Track
+  var tags    = readTags(path, _)
+    , artists = getArtists(tags.artist, _)
 
-      track.artists = artists
-      track.path    = tags.path
-      track.title   = tags.title
-      track.genres  = tags.genre
-      track.year    = tags.year
+  if (!track) track = new Track
 
-      if (!tags.album) {
-        return track.save(function(err) { cb(err, track) })
-      }
+  track.artists = artists
+  track.path    = trackPath
+  track.title   = tags.title
+  track.genres  = tags.genre
+  track.year    = tags.year
 
-      getAlbum(tags, function(err, album) {
-        if (err) return cb(err, track)
+  if (!tags.album) {
+    track.save(function() {})
 
-        /// The album is now referenced on the track
-        // The track must not be referenced twice in the album tracks array
-        //if (~!album.tracks.indexOf(track)) {
-        //  album.tracks.push(track)
-        //  album.save()
-        //}
+    return track
+  }
 
-        track.album = album
+  var album = getAlbum(tags, _)
 
-        track.save(function(err) { cb(err, track) })
-      })
-    })
-  })
+  /// The album is now referenced on the track
+  // The track must not be referenced twice in the album tracks array
+  //if (~!album.tracks.indexOf(track)) {
+  //  album.tracks.push(track)
+  //  album.save()
+  //}
+
+  track.album = album
+
+  track.save(function() {})
+
+  return track
 }
 
 function getAlbum(tags, cb) {
   if (albums[tags.album]) return cb(null, albums[tags.album])
 
   Album.findOne({'title': tags.album}, function(err, album) {
-    if (!options.forceTags && (err || album)) return cb(err, album)
+    if (!config.forceTags && (err || album)) return cb(err, album)
 
     if (!album) album = albums[tags.album] = new Album
 
@@ -150,7 +140,7 @@ function getArtist(name, cb) {
   if (artists[name]) return cb(null, artists[name])
 
   Artist.findOne({'name': name}, function(err, artist) {
-    if (!options.forceTags && (err || artist)) return cb(err, artist)
+    if (!config.forceTags && (err || artist)) return cb(err, artist)
 
     if (!artist) artist = artists[name] = new Artist
 
@@ -177,18 +167,9 @@ function getArtists(names, cb) {
 }
 
 function readTags(path, cb) {
-  if (path == './public/music/Modestep/Modestep - To The Stars (Break The Noize & The Autobots Remix).mp4') {
-    return cb(null, {
-        'artist': ['Break The Noize', 'The Autobots']
-      , 'title':  'Modestep - To The Stars (Break The Noize & The Autobots Remix)'
-      , 'genre': ['Dubstep']
-      , 'year':  2011
-    })
-  }
-
   var s = fs.createReadStream(path)
     , p = new mmd(s)
 
   p.on('metadata', function(data) { cb(null, data) })
-  p.on('done',     function(err)  { if (err) cb(err); s.destroy() })
+  p.on('done',     function(err)  { s.destroy(); if (err) cb(err) })
 }

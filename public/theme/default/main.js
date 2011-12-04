@@ -13,7 +13,7 @@ function loadTracks(tracks, cb) {
   var $table = $('<table>').appendTo($('#tracks').empty())
     , $tbody = $('<tbody>')
 
-  $table.append('<thead><tr><th style="width:16px"></th><th>Track</th><th>Artist</th><th>Album</th><th>Genres</th><th style="width:64px">Duration</th><th style="width:24px"></th></tr></thead>')
+  $table.append('<thead><tr><th style="width:16px"></th><th>Track</th><th>Artist</th><th>Album</th><th>Genres</th><th style="width:64px">Duration</th><th style="width:1px">Year</th><th style="width:24px"></th></tr></thead>')
 
   if (!tracks) return
 
@@ -126,6 +126,7 @@ function trackrow(track) {
          ,   '<td>', album, '</td>'
          ,   '<td>', track.genres, '</td>'
          ,   '<td class="tac">', nm.utils.formatTime(track.duration), '</td>'
+         ,   '<td class="tar">', parseInt(track.year) ? track.year.slice(0, 4) : '', '</td>'
          ,   '<td><a href="', track.path, '?download" title="Download" class="download ui-icon ui-icon-arrowthickstop-1-s ui-button ui-widget ui-corner-all ui-state-default"></a></td>'
          , '</tr>'
          ].join('')

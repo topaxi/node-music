@@ -170,4 +170,21 @@ nm.bind(document, 'logout', function(e) {
   })
 })
 
+utils.truncate = function truncate(str, limit, breakword, pad) {
+  var breakpoint
+
+  if (typeof str !== 'string' || str.length <= limit) return str
+
+  breakword = breakword !== undefined ? breakword : ''
+  pad       = pad       !== undefined ? pad       : '\u2026'
+
+  if (~(breakpoint = str.indexOf(breakword, limit))) {
+    if (breakpoint < str.length - 1) {
+      return str.substr(0, breakpoint) + pad
+    }
+  }
+
+  return str
+}
+
 })()

@@ -122,9 +122,9 @@ function trackrow(track) {
 
   return [ '<tr id="', track._id, '">'
          ,   '<td>', '<a title="Add to queue" class="queue ui-icon ui-icon-circle-plus"></a>', '</td>'
-         ,   '<td>', track.title, '</td>'
+         ,   '<td>', htmltruncate(track.title, 48, ' '), '</td>'
          ,   '<td>', artist(track.artists), '</td>'
-         ,   '<td>', album, '</td>'
+         ,   '<td>', htmltruncate(album, 48, ' '), '</td>'
          ,   '<td>', track.genres, '</td>'
          ,   '<td class="tac">', nm.utils.formatTime(track.duration), '</td>'
          ,   '<td class="tar">', parseInt(track.year) ? track.year.slice(0, 4) : '', '</td>'
@@ -361,5 +361,12 @@ nm.utils.login.on('loggedIn',  loggedIn)
 nm.utils.login.on('error', function() {
   console.log('Authentication error!', arguments)
 })
+
+function htmltruncate(str, limit, breakword, pad) {
+  return [ '<span title="', str, '">'
+         ,   nm.utils.truncate(str, limit, breakword, pad)
+         , '</span>'
+         ].join('')
+}
 
 })()

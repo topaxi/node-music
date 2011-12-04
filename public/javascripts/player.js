@@ -247,6 +247,8 @@ Player.getAllTracks = function(cb) {
   function populate() {
     self._tracks = tracks = tracks.map(populateTrack)
 
+    sortByAlphabet(tracks, 'album', 'title')
+
     self.loadTracks(tracks)
 
     cb(null, tracks)
@@ -276,5 +278,24 @@ Player.getArtistById = function(artistId) {
 Player.loadAlbums  = nm.noop
 Player.loadArtists = nm.noop
 Player.loadTracks  = nm.noop
+
+function sortByAlphabet(array) {
+  var args = Array.prototype.slice.call(arguments, 1)
+
+  array.sort(function(a, b) {
+    for (var i = 0, l = args.length; i < l; ++i) {
+      if (!a[args[i]]) a = ''
+      else if(a)       a = a[args[i]]
+
+      if (!b[args[i]]) b = ''
+      else if(b)       b = b[args[i]]
+    }
+
+    if (a < b) return -1
+    if (a > b) return  1
+
+    return 0
+  })
+}
 
 }())

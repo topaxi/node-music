@@ -27,7 +27,7 @@ module.exports = function(http) {
     Track.find({})
          //.populate('artists')
          //.populate('album')
-         .asc('title')
+         //.asc('title')
          //.asc('album.name')
          //.asc('artists.name')
          .run(function(err, tracks) {

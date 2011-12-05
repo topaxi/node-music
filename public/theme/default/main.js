@@ -124,7 +124,7 @@ function trackrow(track) {
          ,   '<td>', '<a title="Add to queue" class="queue ui-icon ui-icon-circle-plus"></a>', '</td>'
          ,   '<td>', htmltruncate(track.title, 48, ' '), '</td>'
          ,   '<td>', artist(track.artists), '</td>'
-         ,   '<td>', htmltruncate(album, 48, ' '), '</td>'
+         ,   '<td>', htmltruncate(album, 32, ' '), '</td>'
          ,   '<td>', track.genres, '</td>'
          ,   '<td class="tac">', nm.utils.formatTime(track.duration), '</td>'
          ,   '<td class="tar">', parseInt(track.year) ? track.year.slice(0, 4) : '', '</td>'

@@ -125,7 +125,7 @@ login.show = function() {
     }
 
     nm.request.post('/login')
-              .data({ 'assertion': assertion, 'test': 'hoi' })
+              .data({ 'assertion': assertion })
               .end(function(res) {
                 if (!res) return login.emit('loggedOut')
 
@@ -139,10 +139,10 @@ login.whoami = function() {
 
   nm.request.post('/login/whoami', null, function(res) {
     if (res.error) return login.emit('error', res)
-    if (!res.text) return login.emit('loggedOut')
+    if (!res.body) return login.emit('loggedOut')
 
     login.loggedIn = true
-    login.emit('loggedIn', res.text, true)
+    login.emit('loggedIn', res, true)
   })
 }
 

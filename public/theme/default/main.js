@@ -341,16 +341,16 @@ function loggedOut() {
   })
 }
 
-function loggedIn(email) {
+function loggedIn(res) {
   // TODO: halp
   if (typeof $ == 'undefined') {
-    return setTimeout(function() { loggedIn(email) }, 500)
+    return setTimeout(function() { loggedIn(res) }, 500)
   }
 
   $('#login').remove()
 
-  if (email) {
-    $('<img id="avatar">').prop('src', nm.utils.gravatar.getAvatar(email, 64))
+  if (res.body.email) {
+    $('<img id="avatar">').prop('src', nm.utils.gravatar.getAvatar(res.body.email, 64))
                           .appendTo(document.body)
   }
 }

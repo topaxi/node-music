@@ -21,7 +21,7 @@ module.exports = function(http) {
     request.post('https://browserid.org/verify')
            .set('Content-Type', 'application/x-www-form-urlencoded')
            .data({ 'assertion': req.body.assertion
-                 , 'audience' : req.headers.origin
+                 , 'audience' : req.headers.host
                  })
            .end(function(err, rres) {
              if (err) return next(err)
@@ -39,7 +39,12 @@ module.exports = function(http) {
   })
 
   http.post('/login/whoami', function(req, res) {
-    res.send(req.session && req.session.user && req.session.user.email)
+    if (req.session && req.session.user) {
+      res.send({'email': req.session.user.email})
+    }
+    else {
+      res.send(0)
+    }
   })
 
   http.post('/login/logout', function(req, res) {

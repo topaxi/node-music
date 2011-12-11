@@ -212,6 +212,7 @@ tr:nth-child(even), th {
 #tracks table { width: 100% }
 
 #login, #avatar {
+  display: block;
   right: 200px;
   top: 0;
   position: absolute;

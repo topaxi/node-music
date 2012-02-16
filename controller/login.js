@@ -9,6 +9,7 @@ function getUser(email, cb) {
       user        = new User
       user.email  = email
       user.joined = new Date
+      user.admin  = false
       user.save()
     }
 

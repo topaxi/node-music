@@ -49,15 +49,15 @@ require(essentials, function() {
 * Slice reference.
 */
 
-var slice = [].slice;
+var slice = [].slice
 
 /**
 * EventEmitter.
 */
 
 function EventEmitter() {
-  this.callbacks = {};
-};
+  this.callbacks = {}
+}
 
 /**
 * Listen on the given `event` with `fn`.
@@ -68,9 +68,9 @@ function EventEmitter() {
 
 EventEmitter.prototype.on = function(event, fn){
   (this.callbacks[event] = this.callbacks[event] || [])
-    .push(fn);
-  return this;
-};
+    .push(fn)
+  return this
+}
 
 /**
 * Emit `event` with the given args.
@@ -80,13 +80,13 @@ EventEmitter.prototype.on = function(event, fn){
 */
 
 EventEmitter.prototype.emit = function(event){
-  var args = slice.call(arguments, 1)
-    , callbacks = this.callbacks[event];
+  var args      = slice.call(arguments, 1)
+    , callbacks = this.callbacks[event]
 
   if (callbacks) {
     for (var i = 0, len = callbacks.length; i < len; ++i) {
       if (args.length) {
-        callbacks[i].apply(this, args);
+        callbacks[i].apply(this, args)
       }
       else {
         callbacks[i].call(this)
@@ -94,8 +94,8 @@ EventEmitter.prototype.emit = function(event){
     }
   }
 
-  return this;
-};
+  return this
+}
 
 nm.EventEmitter = EventEmitter
 

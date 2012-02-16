@@ -20,9 +20,7 @@ nm.el = function(name, className) {
   return el
 }
 
-var essentials = [ 'https://browserid.org/include.js'
-                 , 'https://crypto-js.googlecode.com/files/2.3.0-crypto-md5.js'
-                 , 'superagent.min'
+var essentials = [ 'superagent.min'
                  , 'utils'
                  , 'player'
                  ]

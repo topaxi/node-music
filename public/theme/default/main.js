@@ -350,11 +350,13 @@ function loggedIn(res) {
   $('#login').remove()
 
   if (res.body.email) {
-    // Yes target _blank... but node-music is a music player so we want to stay
-    // on the page! :)
-    $('<a id="avatar" href="http://gravatar.com/emails/" target="_blank">').append(
-        $('<img>').prop('src', nm.utils.gravatar.getAvatar(res.body.email, 64))
-    ).appendTo(document.body)
+    nm.utils.gravatar.getAvatar(res.body.email, 64, function(avatar) {
+      // Yes target _blank... but node-music is a music player so we want to stay
+      // on the page! :)
+      $('<a id="avatar" href="http://gravatar.com/emails/" target="_blank">').append(
+          $('<img>').prop('src', avatar)
+      ).appendTo(document.body)
+    })
   }
 }
 

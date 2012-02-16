@@ -106,31 +106,36 @@ utils.throttle = function(fun, delay) {
 }
 
 utils.gravatar = {}
-utils.gravatar.getAvatar = function(email, size) {
+utils.gravatar.getAvatar = function(email, size, fn) {
   email += ''
 
-  return 'http://www.gravatar.com/avatar/' +
-    Crypto.MD5(email.trim().toLowerCase()) +
-    "?s=" + (+size || 32)
+  require(['https://crypto-js.googlecode.com/files/2.3.0-crypto-md5.js'], function() {
+    fun('http://www.gravatar.com/avatar/' +
+      Crypto.MD5(email.trim().toLowerCase()) +
+      "?s=" + (+size || 32)
+    )
+  })
 }
 
 var login = utils.login = new nm.EventEmitter
 
 login.show = function() {
-  navigator.id.getVerifiedEmail(function(assertion) {
-    if (!assertion) {
-      login.emit('loggedOut')
+  require(['https://browserid.org/include.js'], function() {
+    navigator.id.getVerifiedEmail(function(assertion) {
+      if (!assertion) {
+        login.emit('loggedOut')
 
-      return
-    }
+        return
+      }
 
-    nm.request.post('/login')
-              .data({ 'assertion': assertion })
-              .end(function(res) {
-                if (!res) return login.emit('loggedOut')
+      nm.request.post('/login')
+                .data({ 'assertion': assertion })
+                .end(function(res) {
+                  if (!res) return login.emit('loggedOut')
 
-                login.emit('loggedIn', res)
-              })
+                  login.emit('loggedIn', res)
+                })
+    })
   })
 }
 
@@ -147,20 +152,22 @@ login.whoami = function() {
 }
 
 nm.bind(document, 'login', function(e) {
-  navigator.id.getVerifiedEmail(function(assertion) {
-    if (!assertion) {
-      login.emit('loggedOut')
+  require(['https://browserid.org/include.js'], function() {
+    navigator.id.getVerifiedEmail(function(assertion) {
+      if (!assertion) {
+        login.emit('loggedOut')
 
-      return
-    }
+        return
+      }
 
-    nm.request.post('/login')
-              .data({ 'assertion': assertion })
-              .end(function(res) {
-                if (!res) return login.emit('loggedOut')
+      nm.request.post('/login')
+                .data({ 'assertion': assertion })
+                .end(function(res) {
+                  if (!res) return login.emit('loggedOut')
 
-                login.emit('loggedIn', res)
-              })
+                  login.emit('loggedIn', res)
+                })
+    })
   })
 })
 

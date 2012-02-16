@@ -1,6 +1,6 @@
 var fs         = require('fs')
   , path       = require('path')
-  , Track      = require('../lib/model/Track')
+  , Track      = require('../lib/model/track')
   , getWavInfo = require('../lib/convert').getWavInfo
   , config     = require('../config.json')
 

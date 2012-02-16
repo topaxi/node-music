@@ -1,6 +1,6 @@
-var Track  = require('../lib/model/Track')
-  , Artist = require('../lib/model/Artist')
-  , Album  = require('../lib/model/Album')
+var Track  = require('../lib/model/track')
+  , Artist = require('../lib/model/artist')
+  , Album  = require('../lib/model/album')
 
 module.exports = function(http) {
   http.get('/', function(req, res) {

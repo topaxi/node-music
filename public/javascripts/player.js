@@ -31,7 +31,7 @@ Player._queueIndex = 0
 Player.queue = function(track) {
   if (typeof track == 'string') return this.queue(this.getTrackById(track))
 
-  Player._queue.push(track)
+  this._queue.push(track)
 
   return this
 }

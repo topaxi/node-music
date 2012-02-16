@@ -4,18 +4,23 @@
  * Module dependencies.
  */
 
-var express = require('express')
+var express         = require('express')
+  , SessionMongoose = require('session-mongoose')
 
 var app = module.exports = express.createServer()
 
 // Configuration
 
 app.configure(function() {
+  var sessionStore = new SessionMongoose({ 'url': 'mongodb://127.0.0.1/node-music' })
+
   app.set('views', __dirname + '/views')
   app.set('view engine', 'jade')
   app.use(express.bodyParser())
   app.use(express.cookieParser())
-  app.use(express.session({ 'secret': '$4$NITNkk8x$zAHV2426ynd3JgcNfduT5DtxFxY$' }))
+  app.use(express.session({ 'secret': '$4$NITNkk8x$zAHV2426ynd3JgcNfduT5DtxFxY$'
+                          , 'store':  sessionStore
+                          }))
   app.use(express.methodOverride())
   app.use(require('./lib/middleware/browser.js'))
   app.use(app.router)
@@ -28,7 +33,7 @@ app.configure('development', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }))
 })
 
-app.configure('production', function(){
+app.configure('production', function() {
   app.use(express.errorHandler()) 
 })
 

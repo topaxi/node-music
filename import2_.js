@@ -20,9 +20,9 @@ var fs         = require('fs')
   , fileFunnel = flows.funnel(20)
   , cpuFunnel  = flows.funnel(require('os').cpus().length - 1 || 1)
 
-var Album  = require('./lib/model/Album')
-  , Artist = require('./lib/model/Artist')
-  , Track  = require('./lib/model/Track')
+var Album  = require('./lib/model/album')
+  , Artist = require('./lib/model/artist')
+  , Track  = require('./lib/model/track')
 
   , albums  = {}
   , artists = {}

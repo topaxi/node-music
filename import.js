@@ -19,9 +19,9 @@ var fs         = require('fs')
   , readSync   = require('./lib/fs').recursiveReaddirSync
   , getWavInfo = require('./lib/convert').getWavInfo
 
-var Album  = require('./lib/model/Album')
-  , Artist = require('./lib/model/Artist')
-  , Track  = require('./lib/model/Track')
+var Album  = require('./lib/model/album')
+  , Artist = require('./lib/model/artist')
+  , Track  = require('./lib/model/track')
 
   , albums  = {}
   , artists = {}

@@ -20,7 +20,7 @@ function getPlaylists() {
     $playlists.append('<li id="newPlaylist">Create Playlist</li>')
 
     for (var i = 0, l = playlists.length; i < l; ++i) {
-      $playlists.append('<li id="'+ playlists[i]._id +'">'+ playlists[i].name +'<li>')
+      $playlists.append('<li id="'+ playlists[i]._id +'">'+ playlists[i].name +'</li>')
 
       populatePlaylist(playlists[i])
     }

@@ -252,7 +252,7 @@ require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'], fu
 
   Player.bind()
 
-  document.getElementById('video').appendChild(Player.audio)
+  $$('video').append(Player.audio)
 
   $$('play').toggleClass('paused', Player.audio.paused)
             .click(function() { Player.play() })

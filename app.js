@@ -1,4 +1,4 @@
-#!/usr/bin/env node-streamline
+#!/usr/bin/env node
 
 /**
  * Module dependencies.

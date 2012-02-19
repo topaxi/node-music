@@ -277,7 +277,7 @@ require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'], fu
     $(this).toggleClass('fullscreen')
   })
 
-  var jQueryUI = '1.8.16'
+  var jQueryUI = '1.8.17'
 
   $('head').append('<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/themes/base/jquery-ui.css">')
   require(['//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min.js'], function() {

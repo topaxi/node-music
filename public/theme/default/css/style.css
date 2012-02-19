@@ -249,6 +249,9 @@ tr:nth-child(even), th {
   top: -1px;
 }
 
+#playlists li       { cursor: pointer }
+#playlists li:hover { background: #bbb }
+
 *::-webkit-scrollbar {
     width: 8px;
     height: 8px;

@@ -39,6 +39,7 @@ app.configure('production', function() {
 
 controller('index')
 controller('login')
+controller('playlist')
 controller('wave')
 
 app.listen(3000)

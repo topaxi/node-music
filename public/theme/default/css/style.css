@@ -232,6 +232,23 @@ tr:nth-child(even), th {
   top: 2em;
   bottom: 0;
 }*/
+
+.contextmenu, .submenu {
+  width: 200px;
+  border: 1px solid #000;
+  background: #fff;
+  position: absolute;
+}
+
+.contextmenu li       { position: relative; cursor: pointer }
+.contextmenu li:hover { background: #bbb }
+
+.submenu {
+  position: absolute;
+  left: 200px;
+  top: -1px;
+}
+
 *::-webkit-scrollbar {
     width: 8px;
     height: 8px;

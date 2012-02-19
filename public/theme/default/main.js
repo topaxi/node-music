@@ -10,6 +10,66 @@ var window     = this
   , nm         = window.nm
   , Player     = nm.Player
 
+function getPlaylists() {
+  nm.request('/playlist/all', function(res) {
+    if (!res.body) return
+
+    var playlists  = Player.playlists = res.body
+      , $playlists = $('<ul id="playlists">')
+
+    $playlists.append('<li id="newPlaylist">Create Playlist</li>')
+
+    for (var i = 0, l = playlists.length; i < l; ++i) {
+      $playlists.append('<li id="'+ playlists[i]._id +'">'+ playlists[i].name +'<li>')
+
+      populatePlaylist(playlists[i])
+    }
+
+    $playlists.on('click', 'li', function() {
+      if (this.id == 'newPlaylist') return newPlaylist()
+
+      for (var l = playlists.length; l--; ) {
+        if (this.id == playlists[l]._id) {
+          loadTracks(playlists[l].tracks)
+
+          break
+        }
+      }
+    }).appendTo('#places')
+  })
+
+  function populatePlaylist(playlist) {
+    var tracks = Player._tracks
+
+    for (var l = tracks.length; l--; ) {
+      for (var ll = playlist.tracks.length; ll--; ) {
+        if (playlist.tracks[ll] == tracks[l]._id) {
+          playlist.tracks[ll] = tracks[l]
+        }
+      }
+    }
+  }
+}
+
+function newPlaylist() {
+  var name     = prompt('Playlist name?')
+    , playlist = { 'name': name, 'filters': [], 'tracks': [] }
+
+  if (!name) return false
+
+  nm.request.post('/playlist/save')
+            .data(playlist)
+            .end(function(res) {
+              if (!res.text) return alert('fail')
+
+              playlist._id = res.body
+
+              Player.playlists.push(playlist)
+
+              $('#playlists').append('<li id="'+ playlist._id +'">'+ playlist.name +'</li>')
+            })
+}
+
 function loadTracks(tracks, cb) {
   var $table = $('<table>').appendTo($('#tracks').empty())
     , $tbody = $('<tbody>')
@@ -234,6 +294,8 @@ function createProgressbar() {
 
 // Load jQuery and get this thing started! :)
 require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'], function() {
+  require(['menu'])
+
   var $ = window.jQuery
 
   Player.getAllTracks(function(err, tracks) {
@@ -339,6 +401,8 @@ function loggedOut() {
   $('<a id="login"><img alt="Sign in" src="https://browserid.org/i/sign_in_blue.png"></a>').appendTo(document.body).click(function() {
     nm.utils.login.show()
   })
+
+  $('#playlists').remove()
 }
 
 function loggedIn(res) {
@@ -358,6 +422,8 @@ function loggedIn(res) {
       ).appendTo(document.body)
     })
   }
+
+  getPlaylists()
 }
 
 nm.utils.login.on('loggedOut', loggedOut)

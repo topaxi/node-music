@@ -83,7 +83,7 @@ Player.loadAlbums = function(albums) {
   var $albums = $('<ul>').appendTo($('#albums').empty())
 
   $albums.append($('<li class="active">Show All</li>').click(function() {
-      $.getJSON('/tracks/all', loadTracks)
+      loadTracks(Player._tracks)
       $albums.children().removeClass('active')
 
       nm.utils.Query.set('album', null)

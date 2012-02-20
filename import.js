@@ -1,15 +1,6 @@
 #!/usr/bin/env node
 
-//var config = { 'library':   './public/music'
-//             , 'forceTags': false // force tag reading, currently broken
-//             , 'waveform':  { 'detail':   5 // higher means less detail
-//                            , 'width':  1024
-//                            , 'height':  128
-//                            , 'color': [0, 48, 160]
-//                            }
-//             }
 var config = require('./config.json')
-
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -88,13 +79,6 @@ function getTrack(tags, cb) {
 
       getAlbum(tags, function(err, album) {
         if (err) return cb(err, track)
-
-        /// The album is now referenced on the track
-        // The track must not be referenced twice in the album tracks array
-        //if (~!album.tracks.indexOf(track)) {
-        //  album.tracks.push(track)
-        //  album.save()
-        //}
 
         track.album = album
 

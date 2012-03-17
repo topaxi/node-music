@@ -13,9 +13,9 @@ Artist.find({}, function(err, artists) {
         console.log('removing', artist)
 
         artist.remove()
-
-        done()
       }
+
+      done()
     })
   })
 })
@@ -27,9 +27,9 @@ Album.find({}, function(err, albums) {
         console.log('removing', album)
 
         album.remove()
-
-        done()
       }
+
+      done()
     })
   })
 })

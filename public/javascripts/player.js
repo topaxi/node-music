@@ -61,8 +61,6 @@ Player.shuffle = false
 Player.repeat  = false
 
 Player.play = function(play) {
-  audio.poster = null
-
   if (typeof play == 'string') return this.play(this.getTrackById(play))
   if (typeof play == 'object') return this.load(play).play(true)
 
@@ -135,6 +133,8 @@ function sources(audio, track) {
 }
 
 Player.load = function(track) {
+  audio.poster = null
+
   this.currentTrack = track
 
   sources(audio, track)

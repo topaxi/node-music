@@ -66,18 +66,6 @@ Player.play = function(play) {
   if (typeof play == 'string') return this.play(this.getTrackById(play))
   if (typeof play == 'object') return this.load(play).play(true)
 
-  if (Player.emitLastfmTrackInfo) {
-    function getName(artist) { return artist.name }
-
-    nm.request('/lastfm/track/getInfo')
-      .send({ 'track':  this.currentTrack.title
-            , 'artist': this.currentTrack.artists.map(getName).join(' & ') })
-      .type('json')
-      .end(function(res) {
-        Player.emit('lastfmTrackInfo', res.body)
-      })
-  }
-
   if (play === undefined) play = audio.paused
 
   if (play === false) {
@@ -153,6 +141,18 @@ Player.load = function(track) {
   audio.load()
 
   this.emit('load', track)
+
+  if (Player.emitLastfmTrackInfo) {
+    function getName(artist) { return artist.name }
+
+    nm.request('/lastfm/track/getInfo')
+      .send({ 'track':  track.title
+            , 'artist': track.artists.map(getName).join(' & ') })
+      .type('json')
+      .end(function(res) {
+        Player.emit('lastfmTrackInfo', res.body)
+      })
+  }
 
   return this
 }

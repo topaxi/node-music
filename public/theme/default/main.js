@@ -408,7 +408,7 @@ function loggedOut() {
 
   $('#avatar').remove()
 
-  $('<a id="login"><img alt="Sign in" src="https://browserid.org/i/sign_in_blue.png"></a>').appendTo(document.body).click(function() {
+  $('<a id="login"><img alt="Sign in" src="/theme/default/images/sign_in_blue.png"></a>').appendTo(document.body).click(function() {
     nm.utils.login.show()
   })
 

@@ -162,7 +162,7 @@ Player.loadAlbums = function(albums) {
   }))
 
   albums.forEach(function(album, i) {
-    var $li = $('<li>'+ album.title +'</li>')
+    var $li = $('<li id="'+ album._id +'">'+ album.title +'</li>')
 
     $li.data('album', album).click(function() {
       $.getJSON('/tracks/album/'+ album._id, loadTracks)

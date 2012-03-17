@@ -1,16 +1,14 @@
 ;(function() {
 
-function noop() { }
-
 var window   = this
   , document = window.document
   , nm       = window.nm
 
-nm.noop = function () { }
+nm.noop = function noop() { }
 
 // Prevent browsers from dieing if there is no console and some calls
 // slipped into live code
-if (!window.console) window.console = { log: noop }
+if (!window.console) window.console = { log: nm.noop }
 
 nm.el = function(name, className) {
   var el = document.createElement(name)

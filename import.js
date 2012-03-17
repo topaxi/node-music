@@ -72,6 +72,7 @@ function getTrack(tags, cb) {
       track.title   = tags.title
       track.genres  = tags.genre
       track.year    = tags.year
+      track.number  = tags.track.no
 
       if (!tags.album) {
         return track.save(function(err) { cb(err, track) })

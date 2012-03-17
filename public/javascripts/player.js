@@ -287,6 +287,7 @@ Player.getAllTracks = function(cb) {
   function populate() {
     self._tracks = tracks = tracks.map(populateTrack)
 
+    sortByNumber(tracks, 'number')
     sortByAlphabet(tracks, 'album', 'title')
 
     self.loadTracks(tracks)
@@ -328,6 +329,25 @@ function sortByAlphabet(array) {
       else if(a)       a = a[args[i]]
 
       if (!b[args[i]]) b = ''
+      else if(b)       b = b[args[i]]
+    }
+
+    if (a < b) return -1
+    if (a > b) return  1
+
+    return 0
+  })
+}
+
+function sortByNumber(array) {
+  var args = Array.prototype.slice.call(arguments, 1)
+
+  array.sort(function(a, b) {
+    for (var i = 0, l = args.length; i < l; ++i) {
+      if (!a[args[i]]) a = 0
+      else if(a)       a = a[args[i]]
+
+      if (!b[args[i]]) b = 0
       else if(b)       b = b[args[i]]
     }
 

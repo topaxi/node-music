@@ -26,6 +26,8 @@ var essentials = [ 'superagent.min'
 require(essentials, function() {
   nm.request = window.superagent
 
+  delete window.superagent
+
   require.config({ 'baseUrl': '/theme/'+ nm.theme +'/js' })
 
   require(['/theme/'+ nm.theme +'/main.js'], function() {

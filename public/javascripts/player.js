@@ -61,6 +61,8 @@ Player.shuffle = false
 Player.repeat  = false
 
 Player.play = function(play) {
+  audio.poster = null
+
   if (typeof play == 'string') return this.play(this.getTrackById(play))
   if (typeof play == 'object') return this.load(play).play(true)
 

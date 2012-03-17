@@ -10,6 +10,16 @@ var window     = this
   , nm         = window.nm
   , Player     = nm.Player
 
+Player.emitLastfmTrackInfo = true
+Player.on('lastfmTrackInfo', function(trackInfo) {
+  if (trackInfo.album && trackInfo.album.image && trackInfo.album.image.length) {
+    Player.audio.poster = trackInfo.album.image[2]['#text']
+  }
+  else {
+    Player.audio.poster = null
+  }
+})
+
 function getPlaylists() {
   nm.request('/playlist/all', function(res) {
     if (!res.body) return

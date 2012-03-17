@@ -28,6 +28,7 @@ ul { list-style: none; padding: 0; margin: 0 }
 }
 
 .tac { text-align: center }
+.tar { text-align: right  }
 
 .download { width: 24px; height: 24px; vertical-align: top }
 

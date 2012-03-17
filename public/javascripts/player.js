@@ -16,6 +16,25 @@ else {
   localStorage.volume = audio.volume
 }
 
+;(function(Player) {
+  function canPlayType(el, playType) {
+    return typeof el.canPlayType == 'function'
+      ? el.canPlayType(playType) !== 'no' && el.canPlayType(playType) !== ''
+      : false
+  }
+
+  var audio = nm.el('audio')
+    , video = nm.el('video')
+
+  Player.support = {
+      'theora': canPlayType(video, 'video/ogg; codecs="theora, vorbis"')
+    , 'h264':   canPlayType(video, 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"')
+    , 'webm':   canPlayType(video, 'video/webm; codecs="vp8, vorbis"')
+    , 'ogg':    canPlayType(audio, 'audio/ogg')
+    , 'mp3':    canPlayType(audio, 'audio/mpeg')
+  }
+})(Player)
+
 audio.autobuffer = true
 audio.controls   = false
 audio.preload    = 'auto'

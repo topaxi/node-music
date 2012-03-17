@@ -12,5 +12,6 @@
     , "node-gd": "0.1.x"
     , "streamline": "0.2.x"
     , "async": "0.1.x"
+    , "fluent-ffmpeg": "0.3.x"
   }
 }

@@ -120,14 +120,19 @@ function sources(audio, track) {
 
   audio.innerHTML = ''
 
-  src()
+  src(track.path)
 
-  if (!/\.ogg$/.exec(track.path)) src('ogg')
-  if (!/\.mp3$/.exec(track.path)) src('mp3')
+  if (Player.support.ogg && !/\.ogg$/.exec(track.path)) {
+    src('/transcodes/'+ track._id +'.ogg')
+  }
 
-  function src(ext) {
+  if (Player.support.mp3 && !/\.mp3$/.exec(track.path)) {
+    src('/transcodes/'+ track._id +'.mp3')
+  }
+
+  function src(path) {
     var source = nm.el('source')
-    source.src = ext ? path + ext : track.path
+    source.src = path
     audio.appendChild(source)
   }
 }

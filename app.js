@@ -42,6 +42,7 @@ controller('login')
 controller('playlist')
 controller('wave')
 controller('lastfm')
+controller('transcode')
 
 app.listen(3000)
 console.log("Express server listening on port %d in %s mode",

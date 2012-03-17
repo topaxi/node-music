@@ -416,8 +416,8 @@ function loggedOut() {
 }
 
 function loggedIn(res) {
-  // TODO: halp
-  if (typeof $ == 'undefined') {
+  // TODO: halp, not ready yet!
+  if (typeof $ == 'undefined' || !Player._tracks) {
     return setTimeout(function() { loggedIn(res) }, 500)
   }
 

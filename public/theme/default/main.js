@@ -12,7 +12,8 @@ var window     = this
 
 Player.emitLastfmTrackInfo = true
 Player.on('lastfmTrackInfo', function(trackInfo) {
-  if (trackInfo.album && trackInfo.album.image && trackInfo.album.image.length) {
+  if (trackInfo && trackInfo.album && trackInfo.album.image &&
+      trackInfo.album.image.length) {
     Player.audio.poster = trackInfo.album.image[2]['#text']
   }
   else {
@@ -413,6 +414,8 @@ function loggedOut() {
     nm.utils.login.show()
   })
 
+  Player.off('load', updateNowPlaying)
+
   $('#playlists').remove()
 }
 
@@ -434,7 +437,31 @@ function loggedIn(res) {
     })
   }
 
+  $('<div style="position:absolute;right:10px" class="scrobble"><input id="scrobble" type="checkbox"> <a href="http://www.last.fm/api/auth/?api_key=967ce1901a718b229e7795a485666a1e&cb=http://192.168.1.4:3000/lastfm/auth">Scrobble</a></div>')
+    .appendTo(document.body)
+
+  Player.on('load', updateNowPlaying)
+
   getPlaylists()
+}
+
+function updateNowPlaying(track) {
+  if (!document.getElementById('scrobble').checked) return
+
+  var params = { 'title':    track.title
+               , 'artist':   artist(track.artists)
+               , 'duration': track.duration
+               }
+
+  if (track.album)    params.album  = track.album.title
+  if (track.number)   params.number = track.number
+
+  nm.request('/lastfm/nowplaying')
+    .send(params)
+    .type('json')
+    .end(function(res) {
+      console.log(res)
+    })
 }
 
 nm.utils.login.on('loggedOut', loggedOut)

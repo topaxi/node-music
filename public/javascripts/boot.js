@@ -41,60 +41,100 @@ require(essentials, function() {
 * MIT Licensed
 */
 
-// TODO: own library, since tons of my libs use this :D
+/**
+ * Initialize a new `Emitter`.
+ * 
+ * @api public
+ */
+
+function Emitter() {
+  this.callbacks = {};
+};
 
 /**
-* Slice reference.
-*/
+ * Listen on the given `event` with `fn`.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
 
-var slice = [].slice
-
-/**
-* EventEmitter.
-*/
-
-function EventEmitter() {
-  this.callbacks = {}
-}
-
-/**
-* Listen on the given `event` with `fn`.
-*
-* @param {String} event
-* @param {Function} fn
-*/
-
-EventEmitter.prototype.on = function(event, fn){
+Emitter.prototype.on = function(event, fn){
   (this.callbacks[event] = this.callbacks[event] || [])
-    .push(fn)
-  return this
-}
+    .push(fn);
+  return this;
+};
 
 /**
-* Emit `event` with the given args.
-*
-* @param {String} event
-* @param {Mixed} ...
-*/
+ * Adds an `event` listener that will be invoked a single
+ * time then automatically removed.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
 
-EventEmitter.prototype.emit = function(event){
-  var args      = slice.call(arguments, 1)
-    , callbacks = this.callbacks[event]
+Emitter.prototype.once = function(event, fn){
+  var self = this;
+
+  function on() {
+    self.off(event, on);
+    fn.apply(this, arguments);
+  }
+
+  this.on(event, on);
+  return this;
+};
+
+/**
+ * Remove the given callback for `event` or all
+ * registered callbacks.
+ *
+ * @param {String} event
+ * @param {Function} fn
+ * @return {Emitter}
+ * @api public
+ */
+
+Emitter.prototype.off = function(event, fn){
+  var callbacks = this.callbacks[event];
+  if (!callbacks) return this;
+
+  // remove all handlers
+  if (1 == arguments.length) {
+    delete this.callbacks[event];
+    return this;
+  }
+
+  // remove specific handler
+  var i = callbacks.indexOf(fn);
+  callbacks.splice(i, 1);
+  return this;
+};
+
+/**
+ * Emit `event` with the given args.
+ *
+ * @param {String} event
+ * @param {Mixed} ...
+ * @return {Emitter} 
+ */
+
+Emitter.prototype.emit = function(event){
+  var args = [].slice.call(arguments, 1)
+    , callbacks = this.callbacks[event];
 
   if (callbacks) {
     for (var i = 0, len = callbacks.length; i < len; ++i) {
-      if (args.length) {
-        callbacks[i].apply(this, args)
-      }
-      else {
-        callbacks[i].call(this)
-      }
+      callbacks[i].apply(this, args)
     }
   }
 
-  return this
-}
+  return this;
+};
 
-nm.EventEmitter = EventEmitter
+nm.EventEmitter = Emitter
 
 }())

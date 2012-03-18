@@ -151,25 +151,7 @@ login.whoami = function() {
   })
 }
 
-nm.bind(document, 'login', function(e) {
-  require(['https://browserid.org/include.js'], function() {
-    navigator.id.getVerifiedEmail(function(assertion) {
-      if (!assertion) {
-        login.emit('loggedOut')
-
-        return
-      }
-
-      nm.request.post('/login')
-                .data({ 'assertion': assertion })
-                .end(function(res) {
-                  if (!res) return login.emit('loggedOut')
-
-                  login.emit('loggedIn', res)
-                })
-    })
-  })
-})
+nm.bind(document, 'login', login.show)
 
 nm.bind(document, 'logout', function(e) {
   nm.request.post('/login/logout', function(res) {

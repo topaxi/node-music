@@ -437,7 +437,7 @@ function loggedIn(res) {
     })
   }
 
-  $('<div style="position:absolute;right:10px" class="scrobble"><input id="scrobble" type="checkbox"> <a href="http://www.last.fm/api/auth/?api_key=967ce1901a718b229e7795a485666a1e&cb=http://192.168.1.4:3000/lastfm/auth">Scrobble</a></div>')
+  $('<div style="position:absolute;right:10px" class="scrobble"><input id="scrobble" type="checkbox"> <a href="http://www.last.fm/api/auth/?api_key=967ce1901a718b229e7795a485666a1e&cb=http://music.topaxi.ch/lastfm/auth">Scrobble</a></div>')
     .appendTo(document.body)
     .find('input')
     .click(function(e) { Player.scrobble = this.checked })

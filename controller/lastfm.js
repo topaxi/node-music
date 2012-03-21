@@ -56,7 +56,7 @@ module.exports = function(http) {
     })
   })
 
-  http.get('/lastfm/scrobble', function(req, res) {
+  http.get('/lastfm/scrobble', function(req, res, next) {
     var q      = req.query
       , user   = req.session.user
       , params = { 'track':     q.title

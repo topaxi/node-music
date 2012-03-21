@@ -30,7 +30,9 @@ module.exports = function(http) {
              getUser(rres.body.email, function(err, user) {
                req.session.user = user
 
-               res.send(rres.body)
+               res.send({ 'email':  user.email
+                        , 'lastfm': user.lastfm
+                        })
              })
            })
   })

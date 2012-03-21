@@ -427,8 +427,10 @@ function loggedIn(res) {
 
   $('#login').remove()
 
-  if (res.body.email) {
-    nm.utils.gravatar.getAvatar(res.body.email, 64, function(avatar) {
+  var user = res.body
+
+  if (user.email) {
+    nm.utils.gravatar.getAvatar(user.email, 64, function(avatar) {
       // Yes target _blank... but node-music is a music player so we want to stay
       // on the page! :)
       $('<a id="avatar" href="http://gravatar.com/emails/" target="_blank">').append(
@@ -437,10 +439,21 @@ function loggedIn(res) {
     })
   }
 
-  $('<div style="position:absolute;right:10px" class="scrobble"><input id="scrobble" type="checkbox"> <a href="http://www.last.fm/api/auth/?api_key=967ce1901a718b229e7795a485666a1e&cb=http://music.topaxi.ch/lastfm/auth">Scrobble</a></div>')
-    .appendTo(document.body)
-    .find('input')
-    .click(function(e) { Player.scrobble = this.checked })
+  var $scrobble = $('<div style="position:absolute;right:10px" class="scrobble">')
+    , $checkbox = $('<input id="scrobble" type="checkbox">')
+
+  $scrobble.append($checkbox)
+
+  if (user.lastfm && user.lastfm.session) {
+    $scrobble.append('<label for="scrobble">Scrobble</label>')
+  }
+  else {
+    $scrobble.append('<a href="http://www.last.fm/api/auth/?api_key=967ce1901a718b229e7795a485666a1e&cb=http://music.topaxi.ch/lastfm/auth">Scrobble</a>')
+    $checkbox.prop('disabled', true)
+  }
+
+  $scrobble.appendTo(document.body)
+  $checkbox.click(function(e) { Player.scrobble = this.checked })
 
   getPlaylists()
 }

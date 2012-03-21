@@ -41,14 +41,12 @@ module.exports = function(http) {
 
   http.post('/login/whoami', function(req, res) {
     if (req.session && req.session.user) {
-      res.send({'email': req.session.user.email})
+      res.send({ 'email':  req.session.user.email
+               , 'lastfm': req.session.user.lastfm
+               })
     }
     else {
-      //res.send(0)
-      User.findOne({'email':'damian.senn@gmail.com'}, function(err, user) {
-        req.session.user = user
-        res.send({'email': user.email})
-      })
+      res.send(0)
     }
   })
 

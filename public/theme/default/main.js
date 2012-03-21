@@ -439,29 +439,10 @@ function loggedIn(res) {
 
   $('<div style="position:absolute;right:10px" class="scrobble"><input id="scrobble" type="checkbox"> <a href="http://www.last.fm/api/auth/?api_key=967ce1901a718b229e7795a485666a1e&cb=http://192.168.1.4:3000/lastfm/auth">Scrobble</a></div>')
     .appendTo(document.body)
-
-  Player.on('load', updateNowPlaying)
+    .find('input')
+    .click(function(e) { Player.scrobble = this.checked })
 
   getPlaylists()
-}
-
-function updateNowPlaying(track) {
-  if (!document.getElementById('scrobble').checked) return
-
-  var params = { 'title':    track.title
-               , 'artist':   artist(track.artists)
-               , 'duration': track.duration
-               }
-
-  if (track.album)    params.album  = track.album.title
-  if (track.number)   params.number = track.number
-
-  nm.request('/lastfm/nowplaying')
-    .send(params)
-    .type('json')
-    .end(function(res) {
-      console.log(res)
-    })
 }
 
 nm.utils.login.on('loggedOut', loggedOut)

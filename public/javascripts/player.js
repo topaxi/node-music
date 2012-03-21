@@ -17,6 +17,64 @@ else {
 }
 
 Player.emitLastfmTrackInfo = false
+Player.scrobble            = false
+
+Player.on('load', function updateNowPlaying(track) {
+  if (!Player.scrobble) return
+
+  var artist = track.artists.map(function(a) { return a.name }).join(' & ')
+    , params = { 'title':    track.title
+               , 'artist':   artist
+               , 'duration': track.duration
+               }
+
+  if (track.album)  params.album  = track.album.title
+  if (track.number) params.number = track.number
+
+  nm.request('/lastfm/nowplaying')
+    .send(params)
+    .type('json')
+    .end(function(res) {
+      console.log(res)
+    })
+})
+
+Player.on('load', function(track) {
+  if (Player.emitLastfmTrackInfo) {
+    function getName(artist) { return artist.name }
+
+    nm.request('/lastfm/track/getInfo')
+      .send({ 'track':  track.title
+            , 'artist': track.artists.map(getName).join(' & ') })
+      .type('json')
+      .end(function(res) {
+        Player.emit('lastfmTrackInfo', res.body)
+      })
+  }
+})
+
+Player.on('ended', function scrobble(track) {
+  // Do not scrobble tracks less than 30s
+  // See: http://www.last.fm/api/scrobbling#when-is-a-scrobble-a-scrobble
+  if (track.duration < 30) return
+
+  var artist = track.artists.map(function(a) { return a.name }).join(' & ')
+    , params = { 'title':    track.title
+               , 'artist':   artist
+               , 'duration': track.duration
+               , 'date':     this.loadTime
+               }
+
+  if (track.album)  params.album  = track.album.title
+  if (track.number) params.number = track.number
+
+  nm.request('/lastfm/scrobble')
+    .send(params)
+    .type('json')
+    .end(function(res) {
+      console.log(res)
+    })
+})
 
 ;(function(Player) {
   function canPlayType(el, playType) {
@@ -141,23 +199,12 @@ Player.load = function(track) {
   audio.poster = null
 
   this.currentTrack = track
+  this.loadTime     = Date.now()
 
   sources(audio, track)
   audio.load()
 
   this.emit('load', track)
-
-  if (Player.emitLastfmTrackInfo) {
-    function getName(artist) { return artist.name }
-
-    nm.request('/lastfm/track/getInfo')
-      .send({ 'track':  track.title
-            , 'artist': track.artists.map(getName).join(' & ') })
-      .type('json')
-      .end(function(res) {
-        Player.emit('lastfmTrackInfo', res.body)
-      })
-  }
 
   return this
 }
@@ -168,16 +215,20 @@ Player.bind = function() {
   })
 
   nm.bind(audio, 'ended', function() {
-    if (Player.repeat == 'once') {
-      Player.play(Player.currentTrack)
+    Player.emit('ended', Player.currentTrack)
+  })
+
+  Player.on('ended', function(track) {
+    if (this.repeat == 'once') {
+      this.play(track)
     }
     else {
-      Player.next()
+      this.next()
     }
   })
 
-  var repeat   = document.getElementsByName('repeat')
-    , shuffle  = document.getElementById('shuffle')
+  var repeat  = document.getElementsByName('repeat')
+    , shuffle = document.getElementById('shuffle')
 
   if (shuffle) this.shuffle = shuffle.checked
 

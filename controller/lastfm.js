@@ -17,7 +17,8 @@ module.exports = function(http) {
     lfm.Auth.getSession({'token': req.query.token}, function(err, data) {
       if (err) return next(err)
 
-      var user = req.session.user
+      var user   = req.session.user
+        , userId = user._id
 
       user.lastfm = user.lastfm || {}
 
@@ -26,8 +27,12 @@ module.exports = function(http) {
 
       req.session.user = user // halp?
 
-      User.findById(req.session.user._id, function(err, user) {
+      User.findById(userId, function(err, user) {
         if (err) return next(err)
+
+        if (!user) {
+          return next(new Error('User#'+ userId +' not found'))
+        }
 
         user.lastfm = user.lastfm || {}
 

@@ -10,10 +10,10 @@ function getUser(email, cb) {
       user.email  = email
       user.joined = new Date
       user.admin  = false
-      user.save()
+      user.save(function(err) {
+        cb(err, user)
+      })
     }
-
-    cb(null, user)
   })
 }
 

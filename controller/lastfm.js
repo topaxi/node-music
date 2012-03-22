@@ -19,12 +19,16 @@ module.exports = function(http) {
 
       var user = req.session.user
 
+      user.lastfm = user.lastfm || {}
+
       user.lastfm.session  = data.session.key
       user.lastfm.username = data.session.name
 
       req.session.user = user // halp?
 
       User.findById(req.session.user._id, function(err, user) {
+        user.lastfm = user.lastfm || {}
+
         user.lastfm.session  = data.session.key
         user.lastfm.username = data.session.name
 

@@ -27,16 +27,18 @@ module.exports = function(http) {
       req.session.user = user // halp?
 
       User.findById(req.session.user._id, function(err, user) {
+        if (err) return next(err)
+
         user.lastfm = user.lastfm || {}
 
         user.lastfm.session  = data.session.key
         user.lastfm.username = data.session.name
 
         user.save(function(err) {
-          console.log(err)
-        })
+          if (err) return next(err)
 
-        res.redirect('/')
+          res.redirect('/')
+        })
       })
     })
   })

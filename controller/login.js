@@ -28,6 +28,8 @@ module.exports = function(http) {
              if (err) return next(err)
 
              getUser(rres.body.email, function(err, user) {
+               if (err) return next(err)
+
                req.session.user = user
 
                res.send({ 'email':  user.email

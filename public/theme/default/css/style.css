@@ -210,6 +210,8 @@ tr:nth-child(even), th {
   background: #e7e7e7;
 }
 
+.new, .new:nth-child(even) { background: #f7f797 }
+
 #tracks table { width: 100% }
 
 #login, #avatar {

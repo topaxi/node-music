@@ -10,6 +10,8 @@ var window     = this
   , nm         = window.nm
   , Player     = nm.Player
 
+  , DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24
+
 Player.emitLastfmTrackInfo = true
 Player.on('lastfmTrackInfo', function(trackInfo) {
   if (trackInfo && trackInfo.album && trackInfo.album.image &&
@@ -189,9 +191,10 @@ function artist(artists) {
 }
 
 function trackrow(track) {
-  var album  = track && track.album && track.album.title
+  var album = track && track.album && track.album.title
+    , isNew = Date.now() - +track.imported < DAY_IN_MILLISECONDS
 
-  return [ '<tr id="', track._id, '">'
+  return [ '<tr id="', track._id, '"', isNew ? ' class="new" title="New!"' : '', '>'
          ,   '<td>', '<a title="Add to queue" class="queue ui-icon ui-icon-circle-plus"></a>', '</td>'
          ,   '<td class="tar">', track.number ? track.number + '.' :  '', '</td>'
          ,   '<td>', htmltruncate(track.title, 48, ' '), '</td>'

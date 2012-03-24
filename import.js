@@ -65,7 +65,10 @@ function getTrack(tags, cb) {
     getArtists(tags.artist, function(err, artists) {
       if (err) return cb(err, track)
 
-      if (!track) track = new Track
+      if (!track) {
+        track = new Track
+        track.imported = Date.now()
+      }
 
       track.artists  = artists
       track.path     = tags.path
@@ -73,7 +76,6 @@ function getTrack(tags, cb) {
       track.genres   = tags.genre
       track.year     = tags.year
       track.number   = tags.track.no
-      track.imported = Date.now()
 
       if (!tags.album) {
         return track.save(function(err) { cb(err, track) })
@@ -96,12 +98,14 @@ function getAlbum(tags, cb) {
   Album.findOne({'title': tags.album}, function(err, album) {
     if (!config.forceTags && (err || album)) return cb(err, album)
 
-    if (!album) album = albums[tags.album] = new Album
+    if (!album) {
+      album = albums[tags.album] = new Album
+      album.imported = Date.now()
+    }
 
     album.title    = tags.album
     album.year     = tags.year
     album.path     = path.dirname(tags.path)
-    album.imported = Date.now()
     album.save(function(err) { cb(err, album) })
   })
 }
@@ -112,10 +116,12 @@ function getArtist(name, cb) {
   Artist.findOne({'name': name}, function(err, artist) {
     if (!config.forceTags && (err || artist)) return cb(err, artist)
 
-    if (!artist) artist = artists[name] = new Artist
+    if (!artist) {
+      artist = artists[name] = new Artist
+      artist.imported = Date.now()
+    }
 
     artist.name     = name
-    artist.imported = Date.now()
     artist.save(function(err) { cb(err, artist) })
   })
 }

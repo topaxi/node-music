@@ -414,7 +414,7 @@ function loggedOut() {
     nm.utils.login.show()
   })
 
-  Player.off('load', updateNowPlaying)
+  Player.scrobble = false
 
   $('#playlists').remove()
 }

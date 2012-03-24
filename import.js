@@ -67,12 +67,13 @@ function getTrack(tags, cb) {
 
       if (!track) track = new Track
 
-      track.artists = artists
-      track.path    = tags.path
-      track.title   = tags.title
-      track.genres  = tags.genre
-      track.year    = tags.year
-      track.number  = tags.track.no
+      track.artists  = artists
+      track.path     = tags.path
+      track.title    = tags.title
+      track.genres   = tags.genre
+      track.year     = tags.year
+      track.number   = tags.track.no
+      track.imported = Date.now()
 
       if (!tags.album) {
         return track.save(function(err) { cb(err, track) })
@@ -97,9 +98,10 @@ function getAlbum(tags, cb) {
 
     if (!album) album = albums[tags.album] = new Album
 
-    album.title = tags.album
-    album.year  = tags.year
-    album.path  = path.dirname(tags.path)
+    album.title    = tags.album
+    album.year     = tags.year
+    album.path     = path.dirname(tags.path)
+    album.imported = Date.now()
     album.save(function(err) { cb(err, album) })
   })
 }
@@ -112,7 +114,8 @@ function getArtist(name, cb) {
 
     if (!artist) artist = artists[name] = new Artist
 
-    artist.name = name
+    artist.name     = name
+    artist.imported = Date.now()
     artist.save(function(err) { cb(err, artist) })
   })
 }

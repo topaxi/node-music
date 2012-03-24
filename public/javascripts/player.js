@@ -267,6 +267,8 @@ Player.bind = function() {
 }
 
 function populateTrack(track) {
+  track.imported = new Date(track.imported)
+
   if (typeof track.album == 'string')
     for (var i = 0, l = Player._albums.length; i < l; ++i)
       if (track.album == Player._albums[i]._id) {

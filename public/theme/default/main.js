@@ -305,7 +305,7 @@ function createProgressbar() {
 }
 
 // Load jQuery and get this thing started! :)
-require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'], function() {
+require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'], function() {
   require(['menu'])
 
   var $ = window.jQuery
@@ -351,7 +351,7 @@ require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'], fu
     $(this).toggleClass('fullscreen')
   })
 
-  var jQueryUI = '1.8.17'
+  var jQueryUI = '1.8.18'
 
   $('head').append('<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/themes/base/jquery-ui.css">')
   require(['//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min.js'], function() {

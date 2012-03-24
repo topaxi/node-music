@@ -14,6 +14,9 @@ function getUser(email, cb) {
         cb(err, user)
       })
     }
+    else {
+      cb(err, user)
+    }
   })
 }
 

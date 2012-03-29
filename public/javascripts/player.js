@@ -380,6 +380,7 @@ Player.getAlbumById = function(albumId) {
   return null
 }
 
+// TODO: Eliminate those functions!
 Player.loadAlbums  = nm.noop
 Player.loadArtists = nm.noop
 Player.loadTracks  = nm.noop

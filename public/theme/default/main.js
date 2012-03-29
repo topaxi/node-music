@@ -54,13 +54,10 @@ function getPlaylists() {
   function populatePlaylist(playlist) {
     var tracks = Player._tracks
 
-    for (var l = tracks.length; l--; ) {
-      for (var ll = playlist.tracks.length; ll--; ) {
-        if (playlist.tracks[ll] == tracks[l]._id) {
+    for (var l = tracks.length; l--; )
+      for (var ll = playlist.tracks.length; ll--; )
+        if (playlist.tracks[ll] == tracks[l]._id)
           playlist.tracks[ll] = tracks[l]
-        }
-      }
-    }
   }
 }
 
@@ -134,7 +131,7 @@ Player.loadArtists = function(artists) {
     var $li = $('<li id="'+ artist._id +'">'+ artist.name +'</li>')
 
     $li.data('artist', artist).click(function() {
-      $.getJSON('/tracks/artist/'+ artist._id, loadTracks)
+      loadTracks(filterTracksByArtist(artist))
 
       nm.utils.Query.set('artist', artist._id)
 
@@ -168,7 +165,7 @@ Player.loadAlbums = function(albums) {
     var $li = $('<li id="'+ album._id +'">'+ album.title +'</li>')
 
     $li.data('album', album).click(function() {
-      $.getJSON('/tracks/album/'+ album._id, loadTracks)
+      loadTracks(filterTracksByAlbum(album))
 
       nm.utils.Query.set('album', album._id)
 
@@ -473,6 +470,18 @@ function htmltruncate(str, limit, breakword, pad) {
          ,   nm.utils.truncate(str, limit, breakword, pad)
          , '</span>'
          ].join('')
+}
+
+function filterTracksByArtist(artist) {
+  return Player._tracks.filter(function(track) {
+    return ~track.artists.indexOf(artist)
+  })
+}
+
+function filterTracksByAlbum(album) {
+  return Player._tracks.filter(function(track) {
+    return track.album === album
+  })
 }
 
 })()

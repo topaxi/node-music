@@ -294,6 +294,8 @@ Player.getAllAlbums = function(cb) {
 
   nm.request('/albums/all', function(res) {
     if (!res.error) {
+      sortByAlphabet(res.body, 'title')
+
       self.loadAlbums(self._albums = res.body)
     }
 
@@ -310,6 +312,8 @@ Player.getAllArtists = function(cb) {
 
   nm.request('/artists/all', function(res) {
     if (!res.error) {
+      sortByAlphabet(res.body, 'name')
+
       self.loadArtists(self._artists = res.body)
     }
 

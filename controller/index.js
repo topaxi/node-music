@@ -10,37 +10,16 @@ module.exports = function(http) {
     })
   })
 
-  //http.get('/track', function(req, res) {
-  //  Track.findOne({}).populate('artists').run(function(err, tracks) {
-  //    res.send(track)
-  //  })
-  //})
-
-  http.get('/track/random', function(req, res) {
-    Track.find({}).populate('artists').run(function(err, tracks) {
-      var rand = Math.random() * tracks.length
-      res.send(tracks[~~rand])
+  http.get('/tracks/all', function(req, res) {
+    Track.find({}, function(err, tracks) {
+      res.send(tracks)
     })
   })
 
-  http.get('/tracks/all', function(req, res) {
-    Track.find({})
-         //.populate('artists')
-         //.populate('album')
-         //.asc('title')
-         //.asc('album.name')
-         //.asc('artists.name')
-         .run(function(err, tracks) {
-            res.send(tracks)
-          })
-  })
-
   http.get('/artists/all', function(req, res) {
-    Artist.find({})
-          .asc('name')
-          .run(function(err, artists) {
-            res.send(artists)
-          })
+    Artist.find({}, function(err, artists) {
+      res.send(artists)
+    })
   })
 
   http.get('/tracks/artist/:id', function(req, res) {
@@ -54,11 +33,9 @@ module.exports = function(http) {
   })
 
   http.get('/albums/all', function(req, res) {
-    Album.find({})
-         .asc('title')
-         .run(function(err, artists) {
-           res.send(artists)
-         })
+    Album.find({}, function(err, artists) {
+      res.send(artists)
+    })
   })
 
   http.get('/tracks/album/:id', function(req, res) {

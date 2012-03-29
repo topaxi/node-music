@@ -269,11 +269,9 @@ Player.bind = function() {
 function populateTrack(track) {
   track.imported = new Date(track.imported)
 
-  if (typeof track.album == 'string')
-    for (var i = 0, l = Player._albums.length; i < l; ++i)
-      if (track.album == Player._albums[i]._id) {
-        track.album = Player._albums[i]; break
-      }
+  if (typeof track.album == 'string') {
+    track.album = Player.getAlbumById(track.album)
+  }
 
   for (var i = 0, l = track.artists.length; i < l; ++i)
     if (typeof track.artists[i] == 'string')
@@ -367,7 +365,17 @@ Player.getArtistById = function(artistId) {
   var artists = this._artists
 
   for (var i = artists.length; i--;) {
-    if (artists[i]._id == trackId) return artists[i]
+    if (artists[i]._id == artistId) return artists[i]
+  }
+
+  return null
+}
+
+Player.getAlbumById = function(albumId) {
+  var albums = this._albums
+
+  for (var i = albums.length; i--;) {
+    if (albums[i]._id == albumId) return albums[i]
   }
 
   return null

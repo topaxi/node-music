@@ -342,8 +342,7 @@ Player.getAllTracks = function(cb) {
   function populate() {
     self._tracks = tracks = tracks.map(populateTrack)
 
-    sortByNumber(tracks, 'number')
-    sortByAlphabet(tracks, 'album', 'title')
+    sortTracksByAlbum(tracks)
 
     self.loadTracks(tracks)
 
@@ -420,6 +419,22 @@ function sortByNumber(array) {
     if (a > b) return  1
 
     return 0
+  })
+}
+
+function sortTracksByAlbum(tracks) {
+  tracks.sort(function(a, b) {
+    var a_name = a.album ? a.album.title : ''
+      , b_name = b.album ? b.album.title : ''
+
+    if (a_name < b_name) return -1
+    if (a_name > b_name) return  1
+
+    if (a.number < b.number) return -1
+    if (a.number > b.number) return  1
+
+    if (a.artists[0].name < b.artists[0].name) return -1
+    if (a.artists[0].name > b.artists[0].name) return  1
   })
 }
 

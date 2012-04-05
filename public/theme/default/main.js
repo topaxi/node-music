@@ -453,8 +453,15 @@ function loggedIn(res) {
     $checkbox.prop('disabled', true)
   }
 
+  $checkbox.click(function(e) {
+    Player.scrobble = this.checked
+
+    if (Player.scrobble && Player.currentTrack && !Player.audio.paused) {
+      Player.updateNowPlaying(Player.currentTrack)
+    }
+  })
+
   $scrobble.appendTo(document.body)
-  $checkbox.click(function(e) { Player.scrobble = this.checked })
 
   getPlaylists()
 }

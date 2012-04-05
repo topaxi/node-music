@@ -1,6 +1,14 @@
 // This script is loaded if all dependencies are
 // finished loading and the DOM is ready
-;(function(undefined) {
+
+requirejs.config({
+  paths: {
+      'jquery':        '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min'
+    , 'jquery-mobile': '//code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1'
+  }
+})
+
+define(['jquery', 'jquery-mobile'], function($, $m) {
 
 var window     = this
   , document   = window.document
@@ -12,11 +20,9 @@ var window     = this
   , Player     = nm.Player
   , artistData = {}
 
-body.innerHTML = '<div data-role="header" id="hdrProgress" data-nobackbtn="true"><h1>Processing...</h1></div><div data-role="content" id="contentProgress"><div align="CENTER"><h4>Please wait.</h4></div></div><div data-role="footer" id="ftrProgress"></div>'
+body.innerHTML = '<div data-role="page"><div data-role="header" id="hdrProgress" data-nobackbtn="true"><h1>Processing...</h1></div><div data-role="content" id="contentProgress"><div align="CENTER"><h4>Please wait.</h4></div></div><div data-role="footer" id="ftrProgress"></div></div>'
 
-head.innerHTML += '<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css">'
-
-require(['http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js'])
+head.innerHTML += '<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.css">'
 
 Player.getAllTracks(function(err, tracks) {
   var artists = Player._artists
@@ -51,7 +57,8 @@ Player.getAllTracks(function(err, tracks) {
     $list.append(
       $('<li id="'+ artist._id +'"><a href="#">'+ artist.name +'</a></li>')
         .click(function() {
-          $.mobile.changePage($('#'+ this.id))
+          // No idea why $(this) does not work here... oO
+          $m.changePage($('#'+ this.id))
         })
     )
   })
@@ -61,7 +68,7 @@ Player.getAllTracks(function(err, tracks) {
 
   $(body).append($artists)
 
-  $.mobile.changePage($artists)
+  $m.changePage($artists)
 
   Player.audio.controls = true
 
@@ -97,91 +104,86 @@ function createArtistPage(artist) {
   $artist .append($content)
 
   $artist.find('#artistsLink').click(function(e) {
-    $.mobile.changePage($('#artists'), {'reverse': 'true'})
+    $m.changePage($('#artists'), {'reverse': 'true'})
   })
 
   $(body).append($artist)
 }
 
-require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'], function() {
-  var $ = window.jQuery
+function createProgressbar() {
+  var audio      = Player.audio
+    , $audio     = $(audio)
+    , $progress  = $$('progress')
+    , $indicator = $('<div class="progress">')
+    , $waveform  = $('<img id="waveform">')
+    , $duration  = $('<div id="duration" class="h">')
+    , $time      = $('<div id="time" class="hi">')
+    , $remaining = $('<div id="remaining" class="h">')
+    , $buffered  = $('<div id="buffered">')
 
-  Player.bind()
+  $indicator.append($time)
+            .append($remaining)
 
-  createProgressbar()
+  $progress.append($buffered)
+           .append($duration)
+           .append($indicator)
+           .append($waveform)
+           .click(function(e) {
+             audio.currentTime = (e.clientX - $waveform.offset().left)
+                               /  $waveform.width() * (audio.duration || Player.currentTrack.duration)
+           })
 
-  function createProgressbar() {
-    var audio      = Player.audio
-      , $audio     = $(audio)
-      , $progress  = $$('progress')
-      , $indicator = $('<div class="progress">')
-      , $waveform  = $('<img id="waveform">')
-      , $duration  = $('<div id="duration" class="h">')
-      , $time      = $('<div id="time" class="hi">')
-      , $remaining = $('<div id="remaining" class="h">')
-      , $buffered  = $('<div id="buffered">')
+  // I'm not sure why, but chromium sometimes won't trigger the progress event
+  $audio.on('timeupdate progress', nm.utils.throttle(function(e) {
+    var ranges   = this.buffered
+      , duration = this.duration
+      , width    = 800
+      , end      = 0
+      , i
 
-    $indicator.append($time)
-              .append($remaining)
+    for (i = ranges.length; i--;) {
+      end = Math.max(ranges.end(i), end)
+    }
 
-    $progress.append($buffered)
-             .append($duration)
-             .append($indicator)
-             .append($waveform)
-             .click(function(e) {
-               audio.currentTime = (e.clientX - $waveform.offset().left)
-                                 /  $waveform.width() * (audio.duration || Player.currentTrack.duration)
-             })
+    $buffered.width(width - width / duration * end)
+  }, 500))
 
-    // I'm not sure why, but chromium sometimes won't trigger the progress event
-    $audio.on('timeupdate progress', nm.utils.throttle(function(e) {
-      var ranges   = this.buffered
-        , duration = this.duration
-        , width    = 800
-        , end      = 0
-        , i
+  ;(function() {
+    var $time  = $('<div class="hovertime">')
+      , $hover = $('<div class="hover">').append($time)
 
-      for (i = ranges.length; i--;) {
-        end = Math.max(ranges.end(i), end)
-      }
-
-      $buffered.width(width - width / duration * end)
-    }, 500))
-
-    ;(function() {
-      var $time  = $('<div class="hovertime">')
-        , $hover = $('<div class="hover">').append($time)
-
-      $progress.mouseenter(function() {
-        $progress.append($hover)
-      })
-
-      $progress.mousemove(nm.utils.throttle(function(e) {
-        var x = e.clientX - $waveform.offset().left
-
-        $hover.width(x)
-
-        $time.text(nm.utils.formatTime((audio.duration || Player.currentTrack.duration) / $waveform.width() * x))
-      }, 25))
-
-      $progress.mouseleave(function() {
-        $hover.remove()
-      })
-    })()
-
-    $audio.on('durationchange', function() {
-      $duration.text(nm.utils.formatTime(audio.duration))
+    $progress.mouseenter(function() {
+      $progress.append($hover)
     })
 
-    $audio.on('timeupdate', nm.utils.throttle(function() {
-      var currentTime = this.currentTime
-        , duration    = this.duration
+    $progress.mousemove(nm.utils.throttle(function(e) {
+      var x = e.clientX - $waveform.offset().left
 
-      $indicator.width(~~($waveform.width() / (duration || Player.currentTrack.duration) * currentTime))
-      $time.text(nm.utils.formatTime(currentTime))
-      $remaining.text(nm.utils.formatTime(currentTime - (duration || Player.currentTrack.duration)))
-    }, 500))
-  }
+      $hover.width(x)
+
+      $time.text(nm.utils.formatTime((audio.duration || Player.currentTrack.duration) / $waveform.width() * x))
+    }, 25))
+
+    $progress.mouseleave(function() {
+      $hover.remove()
+    })
+  })()
+
+  $audio.on('durationchange', function() {
+    $duration.text(nm.utils.formatTime(audio.duration))
+  })
+
+  $audio.on('timeupdate', nm.utils.throttle(function() {
+    var currentTime = this.currentTime
+      , duration    = this.duration
+
+    $indicator.width(~~($waveform.width() / (duration || Player.currentTrack.duration) * currentTime))
+    $time.text(nm.utils.formatTime(currentTime))
+    $remaining.text(nm.utils.formatTime(currentTime - (duration || Player.currentTrack.duration)))
+  }, 500))
+}
+
+Player.bind()
+createProgressbar()
+
 })
-
-})()

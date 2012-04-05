@@ -4,7 +4,6 @@
 
 var window     = this
   , setTimeout = window.setTimeout
-  , JSON       = window.JSON
   , location   = window.location
   , Math       = window.Math
   , nm         = window.nm

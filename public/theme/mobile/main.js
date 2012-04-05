@@ -14,7 +14,7 @@ document.body.innerHTML = '<div data-role="header" id="hdrProgress" data-nobackb
 
 $(document.head).append('<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css">')
 
-require(['http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.1.min.js'])
+require(['http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js'])
 
 Player.getAllTracks(function(err, tracks) {
   var artists = Player._artists

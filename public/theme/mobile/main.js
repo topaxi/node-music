@@ -52,7 +52,7 @@ Player.getAllTracks(function(err, tracks) {
       +'<h1>Artists</h1>'
     +'</div>'
   )
-  $content.append('<h2>Select an artists:</h2>')
+  $content.append('<h2>Select an artist:</h2>')
 
   artists.forEach(function(artist) {
     createArtistPage(artistData[artist.name])

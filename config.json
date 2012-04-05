@@ -5,4 +5,10 @@
                , "height":  128
                , "color": [0, 48, 160]
                }
+, "transcode": { "nice":    10
+               , "bitrate": "160k"
+               , "codecs": { "mp3": "libmp3lame"
+                           , "ogg": "libvorbis"
+                           }
+               }
 }

@@ -1,6 +1,7 @@
 var fs     = require('fs')
   , path   = require('path')
   , Track  = require('../lib/model/track')
+  , config = require('../config.json').transcode
 
 module.exports = function(http) {
   http.get('/transcodes/:trackId.:format', function(req, res, next) {
@@ -14,24 +15,19 @@ module.exports = function(http) {
         return next()
       }
 
-      switch (req.params.format) {
-        case 'mp3': codec = 'libmp3lame'; break
-        case 'ogg': codec = 'libvorbis';  break
-        default:
-          return next(new Error('Unknown file format!'))
+      if (!config.codecs[req.params.format]) {
+        return next(new Error('Unknown file format!'))
       }
 
       Track.findById(req.params.trackId, ['path'], function(err, track) {
         var ffmpeg = require('fluent-ffmpeg')
 
         var proc = new ffmpeg(path.normalize(__dirname +'/../public'+ track.path))
-          .renice(10)
-          .withAudioCodec(codec)
-          .withAudioBitrate('160k')
+          .renice(config.nice)
+          .withAudioCodec(config.codecs[req.params.format])
+          .withAudioBitrate(config.bitrate)
           .toFormat(req.params.format)
 
-        //res.contentType(req.params.format)
-        //proc.writeToStream(res)
         proc.saveToFile(filePath, function(retcode, err) {
           next()
         })

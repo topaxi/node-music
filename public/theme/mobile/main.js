@@ -40,9 +40,10 @@ Player.getAllTracks(function(err, tracks) {
   }
 
   //
-  var $artists = $('<div id="artists" data-role="page">')
+  var $artists = $('<div id="artists" data-role="page" data-url="/">')
     , $content = $('<div data-role="content">')
     , $list    = $('<ul data-role="listview" data-inset="true">')
+    , artist   = nm.utils.Query.get('artist')
 
   $artists.append(
     '<div data-role="header" data-position="fixed">'
@@ -68,7 +69,7 @@ Player.getAllTracks(function(err, tracks) {
 
   $(body).append($artists)
 
-  $m.changePage($artists)
+  $m.changePage(artist ? $('#'+ artist) : $artists)
 
   Player.audio.controls = true
 
@@ -76,13 +77,13 @@ Player.getAllTracks(function(err, tracks) {
 })
 
 function createArtistPage(artist) {
-  var $artist  = $('<div id="'+ artist._id +'" data-role="page">')
+  var $artist  = $('<div id="'+ artist._id +'" data-role="page" data-url="#artist='+ artist._id +'">')
     , $content = $('<div data-role="content">')
     , $list    = $('<ul data-role="listview" data-inset="true" data-split-theme="c" data-split-icon="plus">')
 
   $artist.append(
     '<div data-role="header" data-position="fixed">'
-      +'<a id="artistsLink" href="#">Artists</a>'
+      +'<a id="artistsLink" href="/">Artists</a>'
       +'<h1>'+ artist.name +'</h1>'
     +'</div>'
   )
@@ -102,10 +103,6 @@ function createArtistPage(artist) {
 
   $content.append($list)
   $artist .append($content)
-
-  $artist.find('#artistsLink').click(function(e) {
-    $m.changePage($('#artists'), {'reverse': 'true'})
-  })
 
   $(body).append($artist)
 }

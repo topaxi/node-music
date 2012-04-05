@@ -447,6 +447,7 @@ function loggedIn(res) {
 
   if (user.lastfm && user.lastfm.session) {
     $scrobble.append('<label for="scrobble">Scrobble</label>')
+    $checkbox[0].checked = true
   }
   else {
     $scrobble.append('<a href="http://www.last.fm/api/auth/?api_key=967ce1901a718b229e7795a485666a1e&cb=http://music.topaxi.ch/lastfm/auth">Scrobble</a>')

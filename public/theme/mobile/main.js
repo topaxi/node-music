@@ -17,8 +17,7 @@ head.innerHTML += '<link rel="stylesheet" href="//code.jquery.com/mobile/1.1.0-r
 
 define(['jquery', 'jquery-mobile'], function($, $m) {
 
-var require    = window.require
-  , nm         = window.nm
+var nm         = window.nm
   , body       = document.body
   , Player     = nm.Player
   , artistData = {}

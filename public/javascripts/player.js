@@ -1,7 +1,6 @@
-;(function() {
+;(function(window) { 'use strict'
 
-var window       = this
-  , document     = window.document
+var document     = window.document
   , location     = window.location
   , nm           = window.nm
   , Player       = nm.Player = new nm.EventEmitter
@@ -40,9 +39,9 @@ Player.on('load', function updateNowPlaying(track) {
 })
 
 Player.on('load', function(track) {
-  if (Player.emitLastfmTrackInfo) {
-    function getName(artist) { return artist.name }
+  function getName(artist) { return artist.name }
 
+  if (Player.emitLastfmTrackInfo) {
     nm.request('/lastfm/track/getInfo')
       .send({ 'track':  track.title
             , 'artist': track.artists.map(getName).join(' & ') })
@@ -428,4 +427,4 @@ function sortTracksByAlbum(tracks) {
   })
 }
 
-}())
+})(this)

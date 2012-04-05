@@ -1,9 +1,8 @@
 // This script is loaded if all dependencies are
 // finished loading and the DOM is ready
-;(function(undefined) {
+;(function(window) { 'use strict'
 
-var window   = this
-  , document = window.document
+var document = window.document
   , head     = document.head
 
 requirejs.config({
@@ -185,4 +184,4 @@ createProgressbar()
 
 })
 
-})()
+})(this)

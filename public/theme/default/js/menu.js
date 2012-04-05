@@ -1,7 +1,6 @@
-;(function(undefined) {
+;(function(window) { 'use strict'
 
-var window   = this
-  , document = window
+var document = window
   , $        = window.jQuery
   , nm       = window.nm
   , Player   = nm.Player
@@ -75,4 +74,4 @@ function addToPlaylist(track) {
   }
 }
 
-})()
+})(this)

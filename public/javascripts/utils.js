@@ -1,7 +1,6 @@
-;(function(undefined) {
+;(function(window) { 'use strict'
 
-var window    = this
-  , document  = window.document
+var document  = window.document
   , location  = window.location
   , navigator = window.navigator
   , JSON      = window.JSON
@@ -176,4 +175,4 @@ utils.truncate = function truncate(str, limit, breakword, pad) {
   return str
 }
 
-})()
+})(this)

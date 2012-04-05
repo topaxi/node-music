@@ -1,9 +1,8 @@
 // This script is loaded if all dependencies are
 // finished loading and the DOM is ready
-;(function(undefined) {
+;(function(window) { 'use strict'
 
-var window     = this
-  , setTimeout = window.setTimeout
+var setTimeout = window.setTimeout
   , location   = window.location
   , Math       = window.Math
   , nm         = window.nm
@@ -486,4 +485,4 @@ function filterTracksByAlbum(album) {
   })
 }
 
-})()
+})(this)

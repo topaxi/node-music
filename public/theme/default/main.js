@@ -11,7 +11,7 @@ var setTimeout = window.setTimeout
   , DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24
 
 Player.emitLastfmTrackInfo = true
-Player.on('lastfmTrackInfo', function(trackInfo) {
+Player.on('lastfmTrackInfo', function displayLastfmCoverArt(trackInfo) {
   if (trackInfo && trackInfo.album && trackInfo.album.image &&
       trackInfo.album.image.length) {
     Player.audio.poster = trackInfo.album.image[2]['#text']
@@ -205,7 +205,7 @@ function trackrow(track) {
 
 function stopPropagation(e) { e.stopPropagation() }
 
-Player.on('load', function(track) {
+Player.on('load', function displayCurrentTrack(track) {
   nm.utils.Query.set('track', track._id)
 
   $$('buffered').width(800)

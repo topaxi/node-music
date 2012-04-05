@@ -18,7 +18,7 @@ else {
 Player.emitLastfmTrackInfo = false
 Player.scrobble            = false
 
-Player.updateNowPlaying = function(track) {
+Player.updateNowPlaying = function updateNowPlaying(track) {
   if (!this.scrobble) return
 
   var artist = track.artists.map(function(a) { return a.name }).join(' & ')
@@ -40,7 +40,7 @@ Player.updateNowPlaying = function(track) {
 
 Player.on('load', Player.updateNowPlaying)
 
-Player.on('load', function(track) {
+Player.on('load', function getLastfmTrackInfo(track) {
   function getName(artist) { return artist.name }
 
   if (Player.emitLastfmTrackInfo) {
@@ -219,7 +219,7 @@ Player.bind = function() {
     Player.emit('ended', Player.currentTrack)
   })
 
-  Player.on('ended', function(track) {
+  Player.on('ended', function next(track) {
     if (this.repeat == 'one') {
       this.play(track)
     }

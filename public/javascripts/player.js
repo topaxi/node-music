@@ -293,11 +293,9 @@ Player.getAllAlbums = function(cb) {
   nm.request('/albums/all', function(res) {
     if (!res.error) {
       sortByAlphabet(res.body, 'title')
-
-      self.loadAlbums(self._albums = res.body)
     }
 
-    cb(res.error ? res : null, res.body)
+    cb(res.error ? res : null, self._albums = res.body)
   })
 }
 
@@ -311,11 +309,9 @@ Player.getAllArtists = function(cb) {
   nm.request('/artists/all', function(res) {
     if (!res.error) {
       sortByAlphabet(res.body, 'name')
-
-      self.loadArtists(self._artists = res.body)
     }
 
-    cb(res.error ? res : null, res.body)
+    cb(res.error ? res : null, self._artists = res.body)
   })
 }
 
@@ -343,8 +339,6 @@ Player.getAllTracks = function(cb) {
     self._tracks = tracks = tracks.map(populateTrack)
 
     sortTracksByAlbum(tracks)
-
-    self.loadTracks(tracks)
 
     cb(null, tracks)
   }
@@ -379,11 +373,6 @@ Player.getAlbumById = function(albumId) {
 
   return null
 }
-
-// TODO: Eliminate those functions!
-Player.loadAlbums  = nm.noop
-Player.loadArtists = nm.noop
-Player.loadTracks  = nm.noop
 
 function sortByAlphabet(array) {
   var args = Array.prototype.slice.call(arguments, 1)

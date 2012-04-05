@@ -115,7 +115,7 @@ function loadTracks(tracks, cb) {
   if (typeof cb == 'function') cb()
 }
 
-Player.loadArtists = function(artists) {
+function loadArtists(artists) {
   var $artists = $('<ul>').appendTo($('#artists').empty())
 
   $artists.append($('<li class="active">Show All</li>').click(function() {
@@ -149,7 +149,7 @@ Player.loadArtists = function(artists) {
   }
 }
 
-Player.loadAlbums = function(albums) {
+function loadAlbums(albums) {
   var $albums = $('<ul>').appendTo($('#albums').empty())
 
   $albums.append($('<li class="active">Show All</li>').click(function() {
@@ -313,6 +313,8 @@ require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'], fu
   Player.getAllTracks(function(err, tracks) {
     if (!nm.utils.Query.get('artist')) {
       loadTracks(tracks)
+      loadArtists(Player._artists)
+      loadAlbums(Player._albums)
     }
 
     var query = nm.utils.fromQuery(location.hash.slice(1))

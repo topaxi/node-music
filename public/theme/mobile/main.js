@@ -1,5 +1,10 @@
 // This script is loaded if all dependencies are
 // finished loading and the DOM is ready
+;(function(undefined) {
+
+var window   = this
+  , document = window.document
+  , head     = document.head
 
 requirejs.config({
   paths: {
@@ -8,21 +13,18 @@ requirejs.config({
   }
 })
 
+head.innerHTML += '<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.css">'
+
 define(['jquery', 'jquery-mobile'], function($, $m) {
 
-var window     = this
-  , document   = window.document
-  , require    = window.require
+var require    = window.require
   , JSON       = window.JSON
   , nm         = window.nm
   , body       = document.body
-  , head       = document.head
   , Player     = nm.Player
   , artistData = {}
 
 body.innerHTML = '<div data-role="page"><div data-role="header" id="hdrProgress" data-nobackbtn="true"><h1>Processing...</h1></div><div data-role="content" id="contentProgress"><div align="CENTER"><h4>Please wait.</h4></div></div><div data-role="footer" id="ftrProgress"></div></div>'
-
-head.innerHTML += '<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.css">'
 
 Player.getAllTracks(function(err, tracks) {
   var artists = Player._artists
@@ -184,3 +186,5 @@ Player.bind()
 createProgressbar()
 
 })
+
+})()

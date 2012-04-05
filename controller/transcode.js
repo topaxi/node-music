@@ -18,7 +18,7 @@ module.exports = function(http) {
         case 'mp3': codec = 'libmp3lame'; break
         case 'ogg': codec = 'libvorbis';  break
         default:
-          throw new Error('Unknown file format!')
+          return next(new Error('Unknown file format!'))
       }
 
       Track.findById(req.params.trackId, ['path'], function(err, track) {

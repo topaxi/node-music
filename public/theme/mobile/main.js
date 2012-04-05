@@ -7,12 +7,14 @@ var window     = this
   , require    = window.require
   , JSON       = window.JSON
   , nm         = window.nm
+  , body       = document.body
+  , head       = document.head
   , Player     = nm.Player
   , artistData = {}
 
-document.body.innerHTML = '<div data-role="header" id="hdrProgress" data-nobackbtn="true"><h1>Processing...</h1></div><div data-role="content" id="contentProgress"><div align="CENTER"><h4>Please wait.</h4></div></div><div data-role="footer" id="ftrProgress"></div>'
+body.innerHTML = '<div data-role="header" id="hdrProgress" data-nobackbtn="true"><h1>Processing...</h1></div><div data-role="content" id="contentProgress"><div align="CENTER"><h4>Please wait.</h4></div></div><div data-role="footer" id="ftrProgress"></div>'
 
-$(document.head).append('<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css">')
+head.innerHTML += '<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css">'
 
 require(['http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js'])
 
@@ -57,13 +59,13 @@ Player.getAllTracks(function(err, tracks) {
   $content.append($list)
   $artists.append($content)
 
-  $(document.body).append($artists)
+  $(body).append($artists)
 
   $.mobile.changePage($artists)
 
   Player.audio.controls = true
 
-  document.body.appendChild(Player.audio)
+  body.appendChild(Player.audio)
 })
 
 function createArtistPage(artist) {
@@ -98,7 +100,7 @@ function createArtistPage(artist) {
     $.mobile.changePage($('#artists'), {'reverse': 'true'})
   })
 
-  $(document.body).append($artist)
+  $(body).append($artist)
 }
 
 require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'], function() {

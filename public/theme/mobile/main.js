@@ -9,11 +9,11 @@ var window   = this
 requirejs.config({
   paths: {
       'jquery':        '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min'
-    , 'jquery-mobile': '//code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1'
+    , 'jquery-mobile': '//code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min'
   }
 })
 
-head.innerHTML += '<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.css">'
+head.innerHTML += '<link rel="stylesheet" href="//code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.css">'
 
 define(['jquery', 'jquery-mobile'], function($, $m) {
 

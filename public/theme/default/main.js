@@ -311,11 +311,12 @@ require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'], fu
   var $ = window.jQuery
 
   Player.getAllTracks(function(err, tracks) {
-    if (!nm.utils.Query.get('artist')) {
+    if (!nm.utils.Query.get('artist') && !nm.utils.Query.get('album')) {
       loadTracks(tracks)
-      loadArtists(Player._artists)
-      loadAlbums(Player._albums)
     }
+
+    loadArtists(Player._artists)
+    loadAlbums(Player._albums)
 
     var query = nm.utils.fromQuery(location.hash.slice(1))
 

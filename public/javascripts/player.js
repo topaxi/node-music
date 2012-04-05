@@ -219,7 +219,7 @@ Player.bind = function() {
   })
 
   Player.on('ended', function(track) {
-    if (this.repeat == 'once') {
+    if (this.repeat == 'one') {
       this.play(track)
     }
     else {

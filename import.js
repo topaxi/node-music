@@ -87,6 +87,20 @@ function getTrack(tags, cb) {
         track.album = album
 
         track.save(function(err) { cb(err, track) })
+
+        if (tags.albumartist && tags.albumartist.length) {
+          getArtists(tags.albumartist, function(err, artists) {
+            if (err) return cb(err, track)
+
+            artists.forEach(function(artist) {
+              if (!~artist.albums.indexOf(album._id)) {
+                artist.albums.push(album)
+
+                artist.save()
+              }
+            })
+          })
+        }
       })
     })
   })

@@ -12,9 +12,9 @@ var window     = this
 
 document.body.innerHTML = '<div data-role="header" id="hdrProgress" data-nobackbtn="true"><h1>Processing...</h1></div><div data-role="content" id="contentProgress"><div align="CENTER"><h4>Please wait.</h4></div></div><div data-role="footer" id="ftrProgress"></div>'
 
-$(document.head).append('<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css">')
+$(document.head).append('<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css">')
 
-require(['http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js'])
+require(['http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.1.min.js'])
 
 Player.getAllTracks(function(err, tracks) {
   var artists = Player._artists
@@ -101,7 +101,7 @@ function createArtistPage(artist) {
   $(document.body).append($artist)
 }
 
-require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js'], function() {
+require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'], function() {
   var $ = window.jQuery
 
   Player.bind()

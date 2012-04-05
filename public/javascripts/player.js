@@ -18,8 +18,6 @@ else {
 Player.emitLastfmTrackInfo = false
 Player.scrobble            = false
 
-Player.on('load', Player.updateNowPlaying)
-
 Player.updateNowPlaying = function(track) {
   if (!this.scrobble) return
 
@@ -39,6 +37,8 @@ Player.updateNowPlaying = function(track) {
       console.log(res)
     })
 }
+
+Player.on('load', Player.updateNowPlaying)
 
 Player.on('load', function(track) {
   function getName(artist) { return artist.name }

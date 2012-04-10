@@ -10,6 +10,11 @@ var setTimeout = window.setTimeout
 
   , DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24
 
+  , COLORS = { 'Drum & Bass': [  0,  48, 160]
+             , 'Drumstep':    [176,  32, 160]
+             , 'Dubstep':     [192,  24,   0]
+             }
+
 Player.emitLastfmTrackInfo = true
 Player.on('lastfmTrackInfo', function displayLastfmCoverArt(trackInfo) {
   if (trackInfo && trackInfo.album && trackInfo.album.image &&
@@ -206,6 +211,9 @@ function trackrow(track) {
 function stopPropagation(e) { e.stopPropagation() }
 
 Player.on('load', function displayCurrentTrack(track) {
+  var waveform
+    , genre    = track.genres[0]
+
   nm.utils.Query.set('track', track._id)
 
   $$('buffered').width(800)
@@ -213,10 +221,23 @@ Player.on('load', function displayCurrentTrack(track) {
   $('tr.active').removeClass('active')
   $$(track._id).addClass('active')
 
+  if (genre in COLORS) {
+    $$('progress').find('.progress, .hover')
+                  .css({ 'border-right': '1px solid rgb('+ COLORS[genre] +')'
+                       , 'background': 'rgba('+ COLORS[genre] +', .33)' })
+
+    waveform = '/wave/'+ track._id +'-'+ COLORS[genre].join('-') +'.png'
+  }
+  else {
+    $$('progress').find('.progress, .hover').removeAttr('style')
+
+    waveform = '/wave/'+ track._id +'.png'
+  }
+
   // Set blank gif first, the waveform might take a second to load
   $$('waveform').prop('src', 'data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw%3D%3D')
   setTimeout(function() {
-    $$('waveform').prop('src', '/wave/'+ track._id +'.png')
+    $$('waveform').prop('src', waveform)
   }, 1)
 
   $$('current').html([ '<strong>', track.title, '</strong><br>'
@@ -284,7 +305,7 @@ function createProgressbar() {
     }, 25))
 
     $progress.mouseleave(function() {
-      $hover.remove()
+      $hover.detach()
     })
   })()
 

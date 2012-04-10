@@ -89,8 +89,8 @@ label[for=shuffle] {
   position: absolute;
   top: 0;
   left: 0;
-  background: rgba(0, 64, 223, .33);
-  border-right: 1px solid rgb(0, 0, 255);
+  background: rgba(0, 0, 0, .33);
+  border-right: 1px solid #000;
   height: 54px;
 }
 

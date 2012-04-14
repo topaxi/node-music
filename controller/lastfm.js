@@ -14,6 +14,8 @@ module.exports = function(http) {
   })
 
   http.get('/lastfm/auth', function(req, res, next) {
+    if (!req.session.user) return next(new Error('User not logged in!'))
+
     lfm.Auth.getSession({'token': req.query.token}, function(err, data) {
       if (err) return next(err)
 
@@ -49,6 +51,8 @@ module.exports = function(http) {
   })
 
   http.get('/lastfm/nowplaying', function(req, res, next) {
+    if (!req.session.user) return next(new Error('User not logged in!'))
+
     var q      = req.query
       , user   = req.session.user
       , params = { 'track':   q.title
@@ -68,6 +72,8 @@ module.exports = function(http) {
   })
 
   http.get('/lastfm/scrobble', function(req, res, next) {
+    if (!req.session.user) return next(new Error('User not logged in!'))
+
     var q      = req.query
       , user   = req.session.user
       , params = { 'track':     q.title

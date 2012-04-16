@@ -107,19 +107,21 @@ function getTrack(tags, cb) {
 }
 
 function getAlbum(tags, cb) {
-  if (albums[tags.album]) return cb(null, albums[tags.album])
+  var apath = path.dirname(tags.path)
 
-  Album.findOne({'title': tags.album}, function(err, album) {
+  if (albums[apath]) return cb(null, albums[apath])
+
+  Album.findOne({'path': apath}, function(err, album) {
     if (!config.forceTags && (err || album)) return cb(err, album)
 
     if (!album) {
-      album = albums[tags.album] = new Album
+      album = albums[apath] = new Album
       album.imported = Date.now()
     }
 
-    album.title    = tags.album
-    album.year     = tags.year
-    album.path     = path.dirname(tags.path)
+    album.title = tags.album
+    album.year  = tags.year
+    album.path  = path.dirname(tags.path)
     album.save(function(err) { cb(err, album) })
   })
 }

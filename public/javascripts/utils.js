@@ -128,7 +128,7 @@ login.show = function() {
       }
 
       nm.request.post('/login')
-                .data({ 'assertion': assertion })
+                .send({ 'assertion': assertion })
                 .end(function(res) {
                   if (!res) return login.emit('loggedOut')
 

@@ -71,7 +71,7 @@ function newPlaylist() {
   if (!name) return false
 
   nm.request.post('/playlist/save')
-            .data(playlist)
+            .send(playlist)
             .end(function(res) {
               if (!res.text) return alert('fail')
 

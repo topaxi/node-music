@@ -24,7 +24,7 @@ module.exports = function(http) {
   http.post('/login', function(req, res, next) {
     request.post('https://browserid.org/verify')
            .set('Content-Type', 'application/x-www-form-urlencoded')
-           .data({ 'assertion': req.body.assertion
+           .send({ 'assertion': req.body.assertion
                  , 'audience' : req.headers.host
                  })
            .end(function(err, rres) {

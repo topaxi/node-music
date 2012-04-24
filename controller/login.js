@@ -27,8 +27,8 @@ module.exports = function(http) {
            .send({ 'assertion': req.body.assertion
                  , 'audience' : req.headers.host
                  })
-           .end(function(err, rres) {
-             if (err) return next(err)
+           .end(function(rres) {
+             if (!rres.ok) return next(new Error(rres.text))
 
              getUser(rres.body.email, function(err, user) {
                if (err) return next(err)

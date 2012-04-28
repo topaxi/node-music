@@ -238,18 +238,17 @@ tr:nth-child(even), th {
 
 .contextmenu, .submenu {
   width: 200px;
-  border: 1px solid #000;
-  background: #fff;
   position: absolute;
 }
 
-.contextmenu li       { position: relative; cursor: pointer }
-.contextmenu li:hover { background: #bbb }
+.contextmenu li { position: relative; cursor: pointer }
+.contextmenu li:hover .submenu { display: block !important }
 
 .submenu {
   position: absolute;
   left: 200px;
-  top: -1px;
+  top: 0px;
+  display: none !important;
 }
 
 #playlists li       { cursor: pointer }

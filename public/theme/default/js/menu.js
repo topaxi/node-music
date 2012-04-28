@@ -16,7 +16,9 @@ $('#tracks').on('contextmenu', 'tr', function(e) {
 
   var $this = $(this)
     , track = $this.data('track')
-    , $menu = $('<ul class="contextmenu">')
+    , $menu = $('<ul class="contextmenu ui-menu ui-widget ui-widget-content ui-corner-all">')
+
+  $menu.on('hover', 'a', function() { $(this).toggleClass('ui-state-hover') })
 
   var menu = [ { 'name': 'Add to queue',
                  'click': addToQueue(track) }
@@ -25,16 +27,16 @@ $('#tracks').on('contextmenu', 'tr', function(e) {
                  'click': addToPlaylist(track) } ]
 
   for (var i = 0, l = menu.length; i < l; ++i) {
-    var $el = $('<li>').text(menu[i].name)
+    var $el = $('<li class="ui-menu-item">').html($('<a class="ui-corner-all">').text(menu[i].name))
 
     if (!menu[i].sub) {
       $el.click(menu[i].click)
     }
     else if (menu[i].sub.length) {
-      var $sub = $('<ul class="submenu">').on('click', 'li', menu[i].click)
+      var $sub = $('<ul class="submenu ui-menu ui-widget ui-widget-content ui-corner-all">').on('click', 'li', menu[i].click)
 
       for (var ii = 0, ll = menu[i].sub.length; ii < ll; ++ii) {
-        $sub.append($('<li>').text(menu[i].sub[ii].name)
+        $sub.append($('<li class="ui-menu-item">').html($('<a class="ui-corner-all">').text(menu[i].sub[ii].name))
                              .data('data', menu[i].sub[ii]))
       }
 

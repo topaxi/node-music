@@ -2,6 +2,15 @@
 // finished loading and the DOM is ready
 ;(function(window) { 'use strict'
 
+var jQueryUI = '1.8.18'
+
+requirejs.config({
+  paths: {
+      'jquery':    '//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min'
+    , 'jquery-ui': '//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min'
+  }
+})
+
 var setTimeout = window.setTimeout
   , location   = window.location
   , Math       = window.Math
@@ -324,9 +333,7 @@ function createProgressbar() {
 }
 
 // Load jQuery and get this thing started! :)
-require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'], function() {
-  require(['menu'])
-
+require(['jquery', 'menu'], function() {
   var $ = window.jQuery
 
   Player.getAllTracks(function(err, tracks) {
@@ -373,10 +380,8 @@ require(['https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'], fu
     $(this).toggleClass('fullscreen')
   })
 
-  var jQueryUI = '1.8.18'
-
   $('head').append('<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/themes/base/jquery-ui.css">')
-  require(['//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min.js'], function() {
+  require(['jquery-ui'], function() {
     var audio = Player.audio
 
     $$('back').button({ 'icons': { 'primary': 'ui-icon-seek-first' }, 'text': false })

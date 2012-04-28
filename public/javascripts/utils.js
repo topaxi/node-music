@@ -108,7 +108,7 @@ utils.gravatar = {}
 utils.gravatar.getAvatar = function(email, size, fn) {
   email += ''
 
-  require(['https://crypto-js.googlecode.com/files/2.5.3-crypto-md5.js'], function() {
+  require(['crypto-md5'], function() {
     fn('http://www.gravatar.com/avatar/' +
       Crypto.MD5(email.trim().toLowerCase()) +
       "?s=" + (+size || 32)

@@ -1,5 +1,10 @@
 ;(function(window) { 'use strict'
 
+requirejs.config({
+  paths: { 'crypto-md5': '//crypto-js.googlecode.com/files/2.5.3-crypto-md5'
+         }
+})
+
 var document = window.document
   , nm       = window.nm
 

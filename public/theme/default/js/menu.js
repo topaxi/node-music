@@ -1,8 +1,7 @@
-;(function(window) { 'use strict'
+;(function(global) { 'use strict'; define(['jquery'], function($) {
 
-var document = window
-  , $        = window.jQuery
-  , nm       = window.nm
+var document = global.document
+  , nm       = global.nm
   , Player   = nm.Player
 
 $('#tracks').on('contextmenu', 'tr', function(e) {
@@ -74,4 +73,4 @@ function addToPlaylist(track) {
   }
 }
 
-})(this)
+}) })(this)

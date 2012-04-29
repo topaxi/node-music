@@ -132,6 +132,9 @@ login.show = function() {
                 .end(function(res) {
                   if (!res) return login.emit('loggedOut')
 
+                  login.loggedIn = true
+                  login.user     = res.body
+
                   login.emit('loggedIn', res)
                 })
     })
@@ -146,6 +149,7 @@ login.whoami = function() {
     if (!res.body) return login.emit('loggedOut')
 
     login.loggedIn = true
+    login.user     = res.body
     login.emit('loggedIn', res, true)
   })
 }

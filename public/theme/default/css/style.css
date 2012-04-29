@@ -30,6 +30,17 @@ ul { list-style: none; padding: 0; margin: 0 }
 .tac { text-align: center }
 .tar { text-align: right  }
 
+.db { display: block }
+
+.fl { float: left  }
+.fr { float: right }
+
+.cl { clear: left  }
+.cr { clear: right }
+
+label       { clear: right }
+label input { float: right }
+
 .download { width: 24px; height: 24px; vertical-align: top }
 
 #volume {

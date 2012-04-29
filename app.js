@@ -40,6 +40,7 @@ app.configure('production', function() {
 controller('index')
 controller('login')
 controller('playlist')
+controller('track')
 controller('wave')
 controller('lastfm')
 controller('transcode')

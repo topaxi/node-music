@@ -26,6 +26,12 @@ $('#tracks').on('contextmenu', 'tr', function(e) {
                  'sub':   Player.playlists,
                  'click': addToPlaylist(track) } ]
 
+  if (nm.utils.login.user.admin) {
+    menu.push({ 'name':  'Edit track information'
+              , 'click': editTrackInformation(track)
+              })
+  }
+
   for (var i = 0, l = menu.length; i < l; ++i) {
     var $el = $('<li class="ui-menu-item">').html($('<a class="ui-corner-all">').text(menu[i].name))
 
@@ -59,6 +65,14 @@ $('#tracks').on('contextmenu', 'tr', function(e) {
 function addToQueue(track) {
   return function(e) {
     Player.queue(track)
+  }
+}
+
+function editTrackInformation(track) {
+  return function(e) {
+    require(['track/dialog'], function(dialog) {
+      dialog.show(track)
+    })
   }
 }
 

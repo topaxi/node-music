@@ -1,6 +1,6 @@
 // This script is loaded if all dependencies are
 // finished loading and the DOM is ready
-;(function(window) { 'use strict'
+;(function(window) { 'use strict'; define('theme', function() {
 
 var jQueryUI = '1.8.18'
 
@@ -101,7 +101,7 @@ function loadTracks(tracks, cb) {
   if (!tracks) return
 
   tracks.forEach(function(track, i) {
-    $tbody.append($(trackrow(track)).data('track', track))
+    $tbody.append(trackrow(track))
   })
 
   $table.append($tbody)
@@ -203,18 +203,18 @@ function trackrow(track) {
   var album = track && track.album && track.album.title
     , isNew = Date.now() - +track.imported < DAY_IN_MILLISECONDS
 
-  return [ '<tr id="', track._id, '"', isNew ? ' class="new" title="New!"' : '', '>'
-         ,   '<td>', '<a title="Add to queue" class="queue ui-icon ui-icon-circle-plus"></a>', '</td>'
-         ,   '<td class="tar">', track.number ? track.number + '.' :  '', '</td>'
-         ,   '<td>', htmltruncate(track.title, 48, ' '), '</td>'
-         ,   '<td>', artist(track.artists), '</td>'
-         ,   '<td>', htmltruncate(album, 32, ' '), '</td>'
-         ,   '<td>', track.genres, '</td>'
-         ,   '<td class="tac">', nm.utils.formatTime(track.duration), '</td>'
-         ,   '<td class="tac">', parseInt(track.year) ? track.year.slice(0, 4) : '', '</td>'
-         ,   '<td><a href="', track.path, '?download" title="Download" class="download ui-icon ui-icon-arrowthickstop-1-s ui-button ui-widget ui-corner-all ui-state-default"></a></td>'
-         , '</tr>'
-         ].join('')
+  return $([ '<tr id="', track._id, '"', isNew ? ' class="new" title="New!"' : '', '>'
+           ,   '<td>', '<a title="Add to queue" class="queue ui-icon ui-icon-circle-plus"></a>', '</td>'
+           ,   '<td class="tar">', track.number ? track.number + '.' :  '', '</td>'
+           ,   '<td>', htmltruncate(track.title, 48, ' '), '</td>'
+           ,   '<td>', artist(track.artists), '</td>'
+           ,   '<td>', htmltruncate(album, 32, ' '), '</td>'
+           ,   '<td>', track.genres, '</td>'
+           ,   '<td class="tac">', nm.utils.formatTime(track.duration), '</td>'
+           ,   '<td class="tac">', parseInt(track.year) ? track.year.slice(0, 4) : '', '</td>'
+           ,   '<td><a href="', track.path, '?download" title="Download" class="download ui-icon ui-icon-arrowthickstop-1-s ui-button ui-widget ui-corner-all ui-state-default"></a></td>'
+           , '</tr>'
+           ].join('')).data('track', track)
 }
 
 function stopPropagation(e) { e.stopPropagation() }
@@ -520,4 +520,6 @@ function filterTracksByAlbum(album) {
   })
 }
 
-})(this)
+return { 'trackrow': trackrow }
+
+}) })(this)

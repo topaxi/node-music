@@ -36,6 +36,7 @@ module.exports = function(http) {
                req.session.user = user
 
                res.send({ 'email':  user.email
+                        , 'admin':  user.admin
                         , 'lastfm': user.lastfm
                         })
              })
@@ -49,6 +50,7 @@ module.exports = function(http) {
   http.post('/login/whoami', function(req, res) {
     if (req.session && req.session.user) {
       res.send({ 'email':  req.session.user.email
+               , 'admin':  req.session.user.admin
                , 'lastfm': req.session.user.lastfm
                })
     }

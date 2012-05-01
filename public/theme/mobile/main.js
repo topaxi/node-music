@@ -21,8 +21,6 @@ var nm         = window.nm
   , Player     = nm.Player
   , artistData = {}
 
-body.innerHTML = '<div data-role="page"><div data-role="header" id="hdrProgress" data-nobackbtn="true"><h1>Processing...</h1></div><div data-role="content" id="contentProgress"><div align="CENTER"><h4>Please wait.</h4></div></div><div data-role="footer" id="ftrProgress"></div></div>'
-
 Player.getAllTracks(function(err, tracks) {
   var artists = Player._artists
 

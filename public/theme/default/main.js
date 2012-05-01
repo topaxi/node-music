@@ -11,7 +11,8 @@ requirejs.config({
   }
 })
 
-var setTimeout = window.setTimeout
+var document   = window.document
+  , setTimeout = window.setTimeout
   , location   = window.location
   , Math       = window.Math
   , nm         = window.nm

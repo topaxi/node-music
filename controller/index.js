@@ -4,9 +4,9 @@ var Track  = require('../lib/model/track')
 
 module.exports = function(http) {
   http.get('/', function(req, res) {
-    res.render('index', {
+    res.render('layout', {
         'title': 'node-music'
-      , 'theme': req.browser.mobile ? 'mobile' : 'default'
+      , 'theme': 'mobile' //req.browser.mobile ? 'mobile' : 'default'
     })
   })
 

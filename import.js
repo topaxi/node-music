@@ -115,7 +115,7 @@ function getAlbum(tags, cb) {
   if (albums[apath]) return cb(null, albums[apath])
 
   Album.findOne({'path': apath}, function(err, album) {
-    if (!config.forceTags && (err || album)) return cb(err, album)
+    if ((err || (albums[apath] = album)) && !config.forceTags) return cb(err, album)
 
     if (!album) {
       album = albums[apath] = new Album
@@ -133,7 +133,7 @@ function getArtist(name, cb) {
   if (artists[name]) return cb(null, artists[name])
 
   Artist.findOne({'name': name}, function(err, artist) {
-    if (!config.forceTags && (err || artist)) return cb(err, artist)
+    if ((err || (artists[name] = artist)) && !config.forceTags) return cb(err, artist)
 
     if (!artist) {
       artist = artists[name] = new Artist

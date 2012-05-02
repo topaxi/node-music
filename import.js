@@ -164,5 +164,7 @@ function tags(path, cb) {
     , p = new mmd(s)
 
   p.on('metadata', function(data) { cb(null, data) })
-  p.on('done',     function(err)  { if (err) cb(err); s.destroy() })
+  p.on('done',     function(err)  { if (s.readable) s.destroy()
+                                    if (err) cb(err)
+                                  })
 }

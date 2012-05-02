@@ -59,7 +59,10 @@ function getTrack(path, cb) {
     if (!config.forceTags && (err || track)) return cb(err, track)
 
     tags(path, function(err, tags) {
-      if (err) return cb(err)
+      if (err) return cb(err, track)
+
+      // Set path which is needed for the unique album key
+      tags.path = rpath
 
       getArtists(tags.artist, function(err, artists) {
         if (err) return cb(err, track)

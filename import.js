@@ -31,76 +31,76 @@ readSync(config.library, function(err, path) {
 
   console.log('importing', i +'/'+ files.length, path)
 
-  tags(path, function(err, tags) {
+  getTrack(path, function(err, track) {
     if (err) throw err
 
-    tags.path = path.replace('./public', '')
+    console.log('imported', track.path)
 
-    getTrack(tags, function(err, track) {
+    if (track.duration) return importTrack(i)
+
+    getWavInfo(path, function(err, wave) {
       if (err) throw err
 
-      console.log('imported', track.path)
+      track.duration = wave.subchunk2Size / wave.byteRate
 
-      if (track.duration) return importTrack(i)
+      track.save(function() {
+        console.log('track duration of %d saved', track.duration)
 
-      getWavInfo(path, function(err, wave) {
-        if (err) throw err
-
-        track.duration = wave.subchunk2Size / wave.byteRate
-
-        track.save(function() {
-          console.log('track duration of %d saved', track.duration)
-
-          importTrack(i)
-        })
+        importTrack(i)
       })
     })
   })
 })(0)
 
-function getTrack(tags, cb) {
-  Track.findOne({ 'path': tags.path }, function(err, track) {
+function getTrack(path, cb) {
+  var rpath = path.replace('./public', '')
+
+  Track.findOne({ 'path': rpath }, function(err, track) {
     if (!config.forceTags && (err || track)) return cb(err, track)
 
-    getArtists(tags.artist, function(err, artists) {
-      if (err) return cb(err, track)
+    tags(path, function(err, tags) {
+      if (err) return cb(err)
 
-      if (!track) {
-        track = new Track
-        track.imported = Date.now()
-      }
-
-      track.artists  = artists
-      track.path     = tags.path
-      track.title    = tags.title
-      track.genres   = tags.genre
-      track.year     = tags.year
-      track.number   = tags.track.no
-
-      if (!tags.album) {
-        return track.save(function(err) { cb(err, track) })
-      }
-
-      getAlbum(tags, function(err, album) {
+      getArtists(tags.artist, function(err, artists) {
         if (err) return cb(err, track)
 
-        track.album = album
-
-        track.save(function(err) { cb(err, track) })
-
-        if (tags.albumartist && tags.albumartist.length) {
-          getArtists(tags.albumartist, function(err, artists) {
-            if (err) return cb(err, track)
-
-            artists.forEach(function(artist) {
-              if (!~artist.albums.indexOf(album._id)) {
-                artist.albums.push(album)
-
-                artist.save()
-              }
-            })
-          })
+        if (!track) {
+          track = new Track
+          track.imported = Date.now()
         }
+
+        track.artists  = artists
+        track.path     = rpath
+        track.title    = tags.title
+        track.genres   = tags.genre
+        track.year     = tags.year
+        track.number   = tags.track.no
+
+        if (!tags.album) {
+          return track.save(function(err) { cb(err, track) })
+        }
+
+        getAlbum(tags, function(err, album) {
+          if (err) return cb(err, track)
+
+          track.album = album
+
+          track.save(function(err) { cb(err, track) })
+
+          if (tags.albumartist && tags.albumartist.length) {
+            getArtists(tags.albumartist, function(err, artists) {
+              if (err) return cb(err, track)
+
+              artists.forEach(function(artist) {
+                if (!~artist.albums.indexOf(album._id)) {
+                  artist.albums.push(album)
+
+                  artist.save()
+                }
+              })
+            })
+          }
+        })
       })
     })
   })

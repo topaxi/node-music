@@ -8,7 +8,7 @@
     , "binary": "0.2.x"
     , "mongoose": "2.5.x"
     , "session-mongoose": "0.0.x"
-    , "musicmetadata": "0.1.x"
+    , "musicmetadata": "0.1.5"
     , "node-gd": "0.1.x"
     , "streamline": "0.2.x"
     , "async": "0.1.x"

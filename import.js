@@ -7,8 +7,10 @@ var config = require('./config.json')
 var fs         = require('fs')
   , path       = require('path')
   , mmd        = require('musicmetadata')
-  , readSync   = require('./lib/fs').recursiveReaddirSync
+  , async      = require('async')
+  , findit     = require('findit')
   , getWavInfo = require('./lib/convert').getWavInfo
+  , mongoose   = require('mongoose')
 
 var Album  = require('./lib/model/album')
   , Artist = require('./lib/model/artist')
@@ -18,39 +20,45 @@ var Album  = require('./lib/model/album')
   , artists = {}
   , files   = []
 
-readSync(config.library, function(err, path) {
-  if (err) throw err
+  , rFileTester = new RegExp('\\.'+ Object.keys(config.transcode.codecs).join('|') +'$')
 
-  files.push(path)
+  , i = 0
+
+var finder = findit.find(config.library)
+
+finder.on('file', function(file, stat) {
+  if (file.match(rFileTester)) files.push(file)
 })
 
-;(function importTrack(i) {
-  if (i == files.length) process.exit()
+finder.on('end', function() {
+  async.forEachSeries(files, function(path, done) {
+    console.log('importing', (++i) +'/'+ files.length, path)
 
-  var path = files[i++]
+    getTrack(path, function(err, track) {
+      if (err) return done(err)
 
-  console.log('importing', i +'/'+ files.length, path)
+      console.log('imported', track.path)
 
-  getTrack(path, function(err, track) {
-    if (err) throw err
+      if (track.duration) return done()
 
-    console.log('imported', track.path)
+      getWavInfo(path, function(err, wave) {
+        if (err) return done(err)
 
-    if (track.duration) return importTrack(i)
+        track.duration = wave.subchunk2Size / wave.byteRate
 
-    getWavInfo(path, function(err, wave) {
-      if (err) throw err
+        track.save(function() {
+          console.log('track duration of %d saved', track.duration)
 
-      track.duration = wave.subchunk2Size / wave.byteRate
-
-      track.save(function() {
-        console.log('track duration of %d saved', track.duration)
-
-        importTrack(i)
+          done()
+        })
       })
     })
+  }, function(err) {
+    if (err) console.log(err)
+
+    mongoose.connection.close()
   })
-})(0)
+})
 
 function getTrack(path, cb) {
   var rpath = path.replace('./public', '')

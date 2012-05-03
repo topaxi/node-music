@@ -20,7 +20,7 @@ function close() {
 Track.find({}, function(err, tracks) {
   if (tracks.length) i++
 
-  async.forEachLimit(tracks, 20, function(track, done) {
+  async.forEachLimit(tracks, 10, function(track, done) {
     fs.stat('./public/'+ track.path, function(err, stat) {
       if (!err) return done()
 
@@ -34,7 +34,7 @@ Track.find({}, function(err, tracks) {
 Artist.find({}, function(err, artists) {
   if (artists.length) i++
 
-  async.forEach(artists, function(artist, done) {
+  async.forEachLimit(artists, 5, function(artist, done) {
     Track.findOne({'artists': artist}, function(err, track) {
       if (!track) {
         console.log('removing artist', artist)
@@ -49,7 +49,7 @@ Artist.find({}, function(err, artists) {
 Album.find({}, function(err, albums) {
   if (albums.length) i++
 
-  async.forEach(albums, function(album, done) {
+  async.forEachLimit(albums, 5, function(album, done) {
     Track.findOne({'album': album}, function(err, track) {
       if (!track) {
         console.log('removing album', album)

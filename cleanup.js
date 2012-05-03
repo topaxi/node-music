@@ -24,7 +24,7 @@ Track.find({}, function(err, tracks) {
     fs.stat('./public/'+ track.path, function(err, stat) {
       if (!err) return done()
 
-      console.log('removing', track)
+      console.log('removing track', track)
 
       track.remove(function() { done() })
     })
@@ -37,7 +37,7 @@ Artist.find({}, function(err, artists) {
   async.forEach(artists, function(artist, done) {
     Track.findOne({'artists': artist}, function(err, track) {
       if (!track) {
-        console.log('removing', artist)
+        console.log('removing artist', artist)
 
         artist.remove(function() { done() })
       }
@@ -52,7 +52,7 @@ Album.find({}, function(err, albums) {
   async.forEach(albums, function(album, done) {
     Track.findOne({'album': album}, function(err, track) {
       if (!track) {
-        console.log('removing', album)
+        console.log('removing album', album)
 
         album.remove(function() { done() })
       }

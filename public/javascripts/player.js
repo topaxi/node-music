@@ -55,6 +55,8 @@ Player.on('load', function getLastfmTrackInfo(track) {
 })
 
 Player.on('ended', function scrobble(track) {
+  if (!this.scrobble) return
+
   // Do not scrobble tracks less than 30s
   // See: http://www.last.fm/api/scrobbling#when-is-a-scrobble-a-scrobble
   if (track.duration < 30) return

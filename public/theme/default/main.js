@@ -158,7 +158,7 @@ function loadArtists(artists) {
   var query = nm.utils.fromQuery(location.hash.slice(1))
 
   if (query.artist) {
-    $('#artists').animate({'scrollTop': $$(query.artist).click().position().top - $('#artists').height() / 2})
+    $('#artists').animate({'scrollTop': $('#'+ query.artist).click().position().top - $('#artists').height() / 2})
   }
 }
 
@@ -192,7 +192,7 @@ function loadAlbums(albums) {
   var query = nm.utils.fromQuery(location.hash.slice(1))
 
   if (query.album) {
-    $('#albums').animate({'scrollTop': $$(query.album).click().position().top - $('#albums').height() / 2})
+    $('#albums').animate({'scrollTop': $('#'+ query.album).click().position().top - $('#albums').height() / 2})
   }
 }
 
@@ -229,7 +229,7 @@ Player.on('load', function displayCurrentTrack(track) {
   $('#buffered').width(800)
 
   $('tr.active').removeClass('active')
-  $$(track._id).addClass('active')
+  $('#'+ track._id).addClass('active')
 
   if (genre in COLORS) {
     $('#progress').find('.progress, .hover')
@@ -421,19 +421,9 @@ require(['jquery', 'menu'], function() {
         $volume.slider('value', volume * steps)
       }
     })
-
-    // TODO: Remove this!
-    $('.download').button()
   })
 
   createProgressbar()
-
-  //if (nm.utils.login.loggedIn) {
-  //  loggedIn()
-  //}
-  //else {
-  //  loggedOut()
-  //}
 })
 
 function loggedOut() {
@@ -527,6 +517,7 @@ function filterTracksByAlbum(album) {
   })
 }
 
+// Expose theming functions for other scripts
 return { 'trackrow': trackrow }
 
 }) })(this)

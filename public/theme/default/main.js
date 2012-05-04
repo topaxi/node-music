@@ -350,7 +350,7 @@ require(['jquery', 'menu'], function() {
     if (query.track) {
       Player.play(query.track)
 
-      $('#tracks').animate({'scrollTop': $$(query.track).position().top - $('#tracks').height() / 2})
+      $('#tracks').animate({'scrollTop': $('#'+ query.track).position().top - $('#tracks').height() / 2})
     }
   })
 

@@ -107,7 +107,7 @@ function createArtistPage(artist) {
 function createProgressbar() {
   var audio      = Player.audio
     , $audio     = $(audio)
-    , $progress  = $$('progress')
+    , $progress  = $('#progress')
     , $indicator = $('<div class="progress">')
     , $waveform  = $('<img id="waveform">')
     , $duration  = $('<div id="duration" class="h">')

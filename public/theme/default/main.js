@@ -158,7 +158,7 @@ function loadArtists(artists) {
   var query = nm.utils.fromQuery(location.hash.slice(1))
 
   if (query.artist) {
-    $$('artists').animate({'scrollTop': $$(query.artist).click().position().top - $$('artists').height() / 2})
+    $('#artists').animate({'scrollTop': $$(query.artist).click().position().top - $('#artists').height() / 2})
   }
 }
 
@@ -192,7 +192,7 @@ function loadAlbums(albums) {
   var query = nm.utils.fromQuery(location.hash.slice(1))
 
   if (query.album) {
-    $$('albums').animate({'scrollTop': $$(query.album).click().position().top - $$('albums').height() / 2})
+    $('#albums').animate({'scrollTop': $$(query.album).click().position().top - $('#albums').height() / 2})
   }
 }
 
@@ -226,44 +226,44 @@ Player.on('load', function displayCurrentTrack(track) {
 
   nm.utils.Query.set('track', track._id)
 
-  $$('buffered').width(800)
+  $('#buffered').width(800)
 
   $('tr.active').removeClass('active')
   $$(track._id).addClass('active')
 
   if (genre in COLORS) {
-    $$('progress').find('.progress, .hover')
+    $('#progress').find('.progress, .hover')
                   .css({ 'border-right': '1px solid rgb('+ COLORS[genre] +')'
                        , 'background': 'rgba('+ COLORS[genre] +', .33)' })
 
     waveform = '/wave/'+ track._id +'-'+ COLORS[genre].join('-') +'.png'
   }
   else {
-    $$('progress').find('.progress, .hover').removeAttr('style')
+    $('#progress').find('.progress, .hover').removeAttr('style')
 
     waveform = '/wave/'+ track._id +'.png'
   }
 
   // Set blank gif first, the waveform might take a second to load
-  $$('waveform').prop('src', 'data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw%3D%3D')
+  $('#waveform').prop('src', 'data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw%3D%3D')
   setTimeout(function() {
-    $$('waveform').prop('src', waveform)
+    $('#waveform').prop('src', waveform)
   }, 1)
 
-  $$('current').html([ '<strong>', track.title, '</strong><br>'
+  $('#current').html([ '<strong>', track.title, '</strong><br>'
                      , '<span class="h">by</span>'
                      , artist(track.artists)
                      , track.album ? '<span class="h">from</span>' : ''
                      , track.album ? track.album.title : ''
                      ].join(' '))
 
-  document.title = $$('current').text()
+  document.title = $('#current').text()
 })
 
 function createProgressbar() {
   var audio      = Player.audio
     , $audio     = $(audio)
-    , $progress  = $$('progress')
+    , $progress  = $('#progress')
     , $indicator = $('<div class="progress">')
     , $waveform  = $('<img id="waveform">')
     , $duration  = $('<div id="duration" class="h">')
@@ -356,14 +356,14 @@ require(['jquery', 'menu'], function() {
 
   Player.bind()
 
-  $$('video').append(Player.audio)
+  $('#video').append(Player.audio)
 
-  $$('play').toggleClass('paused', Player.audio.paused)
+  $('#play').toggleClass('paused', Player.audio.paused)
             .click(function() { Player.play() })
 
   $(Player.audio).on('play pause', function() {
     var label = this.paused ? 'Play' : 'Pause'
-      , $play = $$('play').toggleClass('paused', this.paused)
+      , $play = $('#play').toggleClass('paused', this.paused)
                           .text(label)
 
 
@@ -385,23 +385,23 @@ require(['jquery', 'menu'], function() {
   require(['jquery-ui'], function() {
     var audio = Player.audio
 
-    $$('back').button({ 'icons': { 'primary': 'ui-icon-seek-first' }, 'text': false })
-    $$('play').button({ 'icons': { 'primary': 'ui-icon-play'       }, 'text': false })
-    $$('next').button({ 'icons': { 'primary': Player.shuffle ? 'ui-icon-shuffle' : 'ui-icon-seek-end' }, 'text': false })
+    $('#back').button({ 'icons': { 'primary': 'ui-icon-seek-first' }, 'text': false })
+    $('#play').button({ 'icons': { 'primary': 'ui-icon-play'       }, 'text': false })
+    $('#next').button({ 'icons': { 'primary': Player.shuffle ? 'ui-icon-shuffle' : 'ui-icon-seek-end' }, 'text': false })
 
-    $$('shuffle').button().click(function() {
+    $('#shuffle').button().click(function() {
       Player.shuffle = !Player.shuffle
 
-      $$('next').button('option', 'icons', { 'primary': Player.shuffle ? 'ui-icon-shuffle' : 'ui-icon-seek-end' })
+      $('#next').button('option', 'icons', { 'primary': Player.shuffle ? 'ui-icon-shuffle' : 'ui-icon-seek-end' })
     })
 
-    $$('repeat').buttonset().on('click', 'input', function() {
+    $('#repeat').buttonset().on('click', 'input', function() {
       Player.repeat = this.value || false
     })
 
     var steps   = 50
       , volume  = audio.volume
-      , $volume = $$('volume').slider({
+      , $volume = $('#volume').slider({
           'value':  audio.volume * steps
         , 'change': function(e, ui) {
                       volume = ui.value / steps

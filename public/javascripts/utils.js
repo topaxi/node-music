@@ -20,10 +20,6 @@ nm.bind = function(el, events, fun) {
   return el
 }
 
-window.$$ = function $$(id) {
-  return jQuery(document.getElementById(id))
-}
-
 Query.get = function(n) {
   if (location.hash.length <= 1) return null
 

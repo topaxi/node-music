@@ -8,16 +8,12 @@ module.exports = function(http) {
     var filePath = path.normalize(__dirname +'/../public/transcodes/'+ req.params.trackId +'.'+ req.params.format)
       , codec
 
+    if (!config.codecs[req.params.format]) {
+      return next('Unknown file format!')
+    }
+
     fileExists(filePath, function(err, exists) {
-      if (err) throw err
-
-      if (exists) {
-        return next()
-      }
-
-      if (!config.codecs[req.params.format]) {
-        return next(new Error('Unknown file format!'))
-      }
+      if (err || exists) return next(err)
 
       Track.findById(req.params.trackId, ['path'], function(err, track) {
         var ffmpeg = require('fluent-ffmpeg')

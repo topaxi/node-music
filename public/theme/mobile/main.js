@@ -18,8 +18,7 @@ head.innerHTML += '<link rel="stylesheet" href="//code.jquery.com/mobile/'+ jQue
 define('theme', ['player', 'utils', 'jquery', 'jquery-mobile'],
   function(Player, utils, $, $m) {
 
-var nm         = window.nm
-  , body       = document.body
+var body       = document.body
   , artistData = {}
 
 Player.getAllTracks(function(err, tracks) {

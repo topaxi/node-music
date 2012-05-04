@@ -1,39 +1,25 @@
 ;(function(window) { 'use strict'
 
-requirejs.config({
+require.config({
   paths: { 'crypto-md5': '//crypto-js.googlecode.com/files/2.5.3-crypto-md5'
          }
 })
 
-var document = window.document
-  , nm       = window.nm
+var document   = window.document
+  , superagent = window.superagent
+  , noop       = function noop() { }
 
-nm.noop = function noop() { }
+define('superagent', function() { return superagent })
 
 // Prevent browsers from dieing if there is no console and some calls
 // slipped into live code
-if (!window.console) window.console = { log: nm.noop }
+if (!window.console) window.console = { log: noop }
 
-nm.el = function(name, className) {
-  var el = document.createElement(name)
-
-  if (className) el.className = className
-
-  return el
-}
-
-var essentials = [ 'superagent.min'
-                 , 'utils'
-                 , 'player'
-                 ]
-
-require(essentials, function() {
-  nm.request = window.superagent
-
+require(['utils', 'player'], function(utils) {
   require.config({ 'baseUrl': '/theme/'+ nm.theme +'/js' })
 
   require(['/theme/'+ nm.theme +'/main.js'], function() {
-    nm.utils.login.whoami()
+    utils.login.whoami()
   })
 })
 
@@ -137,6 +123,8 @@ Emitter.prototype.emit = function(event){
   return this;
 };
 
-nm.EventEmitter = Emitter
+define('eventemitter', function() {
+  return nm.EventEmitter = Emitter
+})
 
 })(this)

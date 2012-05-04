@@ -5,7 +5,7 @@
 var document = window.document
   , head     = document.head
 
-requirejs.config({
+require.config({
   paths: {
       'jquery':        '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min'
     , 'jquery-mobile': '//code.jquery.com/mobile/1.1.0-rc.2/jquery.mobile-1.1.0-rc.2.min'
@@ -14,11 +14,11 @@ requirejs.config({
 
 head.innerHTML += '<link rel="stylesheet" href="//code.jquery.com/mobile/1.1.0-rc.2/jquery.mobile-1.1.0-rc.2.min.css">'
 
-define(['jquery', 'jquery-mobile'], function($, $m) {
+define('theme', ['player', 'utils', 'jquery', 'jquery-mobile'],
+  function(Player, utils, $, $m) {
 
 var nm         = window.nm
   , body       = document.body
-  , Player     = nm.Player
   , artistData = {}
 
 Player.getAllTracks(function(err, tracks) {
@@ -40,7 +40,7 @@ Player.getAllTracks(function(err, tracks) {
   var $artists = $('<div id="artists" data-role="page" data-url="/">')
     , $content = $('<div data-role="content">')
     , $list    = $('<ul data-role="listview" data-inset="true">')
-    , artist   = nm.utils.Query.get('artist')
+    , artist   = utils.Query.get('artist')
 
   $artists.append(
     '<div data-role="header" data-position="fixed">'
@@ -128,7 +128,7 @@ function createProgressbar() {
            })
 
   // I'm not sure why, but chromium sometimes won't trigger the progress event
-  $audio.on('timeupdate progress', nm.utils.throttle(function(e) {
+  $audio.on('timeupdate progress', utils.throttle(function(e) {
     var ranges   = this.buffered
       , duration = this.duration
       , width    = 800
@@ -150,12 +150,12 @@ function createProgressbar() {
       $progress.append($hover)
     })
 
-    $progress.mousemove(nm.utils.throttle(function(e) {
+    $progress.mousemove(utils.throttle(function(e) {
       var x = e.clientX - $waveform.offset().left
 
       $hover.width(x)
 
-      $time.text(nm.utils.formatTime((audio.duration || Player.currentTrack.duration) / $waveform.width() * x))
+      $time.text(utils.formatTime((audio.duration || Player.currentTrack.duration) / $waveform.width() * x))
     }, 25))
 
     $progress.mouseleave(function() {
@@ -164,16 +164,16 @@ function createProgressbar() {
   })()
 
   $audio.on('durationchange', function() {
-    $duration.text(nm.utils.formatTime(audio.duration))
+    $duration.text(utils.formatTime(audio.duration))
   })
 
-  $audio.on('timeupdate', nm.utils.throttle(function() {
+  $audio.on('timeupdate', utils.throttle(function() {
     var currentTime = this.currentTime
       , duration    = this.duration
 
     $indicator.width(~~($waveform.width() / (duration || Player.currentTrack.duration) * currentTime))
-    $time.text(nm.utils.formatTime(currentTime))
-    $remaining.text(nm.utils.formatTime(currentTime - (duration || Player.currentTrack.duration)))
+    $time.text(utils.formatTime(currentTime))
+    $remaining.text(utils.formatTime(currentTime - (duration || Player.currentTrack.duration)))
   }, 500))
 }
 

@@ -1,14 +1,15 @@
 ;(function(window) { 'use strict'
 
+define('utils', ['eventemitter'], function(EventEmitter) {
+
 var document  = window.document
   , location  = window.location
   , navigator = window.navigator
   , JSON      = window.JSON
-  , nm        = window.nm
-  , utils     = nm.utils = {}
+  , utils     = {}
   , Query     = {}
 
-nm.bind = function(el, events, fun) {
+utils.bind = function(el, events, fun) {
   if (!el) return
 
   events = events.split(' ')
@@ -112,7 +113,7 @@ utils.gravatar.getAvatar = function(email, size, fn) {
   })
 }
 
-var login = utils.login = new nm.EventEmitter
+var login = utils.login = new EventEmitter
 
 login.show = function() {
   require(['https://browserid.org/include.js'], function() {
@@ -123,7 +124,7 @@ login.show = function() {
         return
       }
 
-      nm.request.post('/login')
+      superagent.post('/login')
                 .send({ 'assertion': assertion })
                 .end(function(res) {
                   if (!res) return login.emit('loggedOut')
@@ -140,7 +141,7 @@ login.show = function() {
 login.whoami = function() {
   login.loggedIn = false
 
-  nm.request.post('/login/whoami', null, function(res) {
+  superagent.post('/login/whoami', null, function(res) {
     if (res.error) return login.emit('error', res)
     if (!res.body) return login.emit('loggedOut')
 
@@ -150,10 +151,10 @@ login.whoami = function() {
   })
 }
 
-nm.bind(document, 'login', login.show)
+utils.bind(document, 'login', login.show)
 
-nm.bind(document, 'logout', function(e) {
-  nm.request.post('/login/logout', function(res) {
+utils.bind(document, 'logout', function(e) {
+  superagent.post('/login/logout', function(res) {
     login.emit('loggedOut')
   })
 })
@@ -175,4 +176,6 @@ utils.truncate = function truncate(str, limit, breakword, pad) {
   return str
 }
 
-})(this)
+return utils
+
+}) })(this)

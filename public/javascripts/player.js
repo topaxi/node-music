@@ -1,18 +1,27 @@
 ;(function(window) { 'use strict'
 
+var deps = [ 'eventemitter'
+           , 'superagent'
+           , 'utils'
+           ]
+
+define('player', deps, function(EventEmitter, request, utils) {
+
 var document     = window.document
   , location     = window.location
-  , nm           = window.nm
-  , Player       = nm.Player = new nm.EventEmitter
-  , audio        = Player.audio = nm.el(nm.theme == 'mobile' ? 'audio' : 'video')
+  , Player       = Player = new EventEmitter
+  // TODO: How do we decide on audio or video? Maybe use always video?
+  //       If we use video, what will happen to devices like iphone?
+  , audio        = Player.audio = cel(nm.theme == 'mobile' ? 'audio' : 'video')
   , localStorage = window.localStorage
   , Math         = window.Math
+  , noop         = function noop() { }
 
-if (!window.isNaN(localStorage.volume)) {
-  audio.volume = localStorage.volume
+if (isNaN(localStorage.volume)) {
+  localStorage.volume = audio.volume
 }
 else {
-  localStorage.volume = audio.volume
+  audio.volume = localStorage.volume
 }
 
 Player.emitLastfmTrackInfo = false
@@ -30,7 +39,7 @@ Player.updateNowPlaying = function updateNowPlaying(track) {
   if (track.album)  params.album  = track.album.title
   if (track.number) params.number = track.number
 
-  nm.request('/lastfm/nowplaying')
+  request('/lastfm/nowplaying')
     .send(params)
     .type('json')
     .end(function(res) {
@@ -44,7 +53,7 @@ Player.on('load', function getLastfmTrackInfo(track) {
   function getName(artist) { return artist.name }
 
   if (Player.emitLastfmTrackInfo) {
-    nm.request('/lastfm/track/getInfo')
+    request('/lastfm/track/getInfo')
       .send({ 'track':  track.title
             , 'artist': track.artists.map(getName).join(' & ') })
       .type('json')
@@ -71,7 +80,7 @@ Player.on('ended', function scrobble(track) {
   if (track.album)  params.album  = track.album.title
   if (track.number) params.number = track.number
 
-  nm.request('/lastfm/scrobble')
+  request('/lastfm/scrobble')
     .send(params)
     .type('json')
     .end(function(res) {
@@ -86,8 +95,8 @@ Player.on('ended', function scrobble(track) {
       : false
   }
 
-  var audio = nm.el('audio')
-    , video = nm.el('video')
+  var audio = cel('audio')
+    , video = cel('video')
 
   Player.support = {
       'theora': canPlayType(video, 'video/ogg; codecs="theora, vorbis"')
@@ -192,7 +201,7 @@ function sources(audio, track) {
   }
 
   function src(path) {
-    var source = nm.el('source')
+    var source = cel('source')
     source.src = path
     audio.appendChild(source)
   }
@@ -213,11 +222,11 @@ Player.load = function(track) {
 }
 
 Player.bind = function() {
-  nm.bind(audio, 'volumechange', function() {
+  utils.bind(audio, 'volumechange', function() {
     localStorage.volume = audio.volume
   })
 
-  nm.bind(audio, 'ended', function() {
+  utils.bind(audio, 'ended', function() {
     Player.emit('ended', Player.currentTrack)
   })
 
@@ -242,12 +251,12 @@ Player.bind = function() {
   }
 
   ;['back', 'next'].forEach(function(action) {
-    nm.bind(document.getElementById(action), 'click', function() {
+    utils.bind(document.getElementById(action), 'click', function() {
       Player[action]()
     })
   })
 
-  nm.bind(document, 'keyup', function(e) {
+  utils.bind(document, 'keyup', function(e) {
     switch (e.keyCode) {
       case 37: Player.back(); break
       case 38: Player.stop(); break
@@ -256,9 +265,9 @@ Player.bind = function() {
     }
   })
 
-  nm.bind(window, 'hashchange', function() {
+  utils.bind(window, 'hashchange', function() {
     if (location.hash) {
-      var trackId = nm.utils.Query.get('track')
+      var trackId = utils.Query.get('track')
 
       if (Player.currentTrack._id != trackId) {
         Player.play(trackId)
@@ -289,11 +298,11 @@ function populateTrack(track) {
 Player.getAllAlbums = function(cb) {
   var self = this
 
-  cb = cb || nm.noop
+  cb = cb || noop
 
   if (self._albums) return cb(null, self._albums)
 
-  nm.request('/albums/all', function(res) {
+  request('/albums/all', function(res) {
     if (!res.error) {
       sortByAlphabet(res.body, 'title')
     }
@@ -305,11 +314,11 @@ Player.getAllAlbums = function(cb) {
 Player.getAllArtists = function(cb) {
   var self = this
 
-  cb = cb || nm.noop
+  cb = cb || noop
 
   if (self._artists) return cb(null, self._artists)
 
-  nm.request('/artists/all', function(res) {
+  request('/artists/all', function(res) {
     if (!res.error) {
       sortByAlphabet(res.body, 'name')
     }
@@ -319,7 +328,7 @@ Player.getAllArtists = function(cb) {
 }
 
 Player.getAllTracks = function(cb) {
-  cb = cb || nm.noop
+  cb = cb || noop
 
   if (this._tracks) return cb(null, this._tracks)
 
@@ -327,7 +336,7 @@ Player.getAllTracks = function(cb) {
     , c    = 3
     , tracks
 
-  nm.request('/tracks/all', function(res) {
+  request('/tracks/all', function(res) {
     if (res.error) return cb(res)
 
     tracks = res.body
@@ -431,4 +440,10 @@ function sortTracksByAlbum(tracks) {
   })
 }
 
-})(this)
+function cel(name) {
+  return document.createElement(name)
+}
+
+return Player
+
+}) })(this)

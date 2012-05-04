@@ -6,5 +6,6 @@ html
     link(rel='stylesheet', href='/theme/#{theme}/css/style.css')
     script
       nm={theme:'#{theme}'}
+    script(src='/javascripts/superagent.min.js')
     script(data-main='/javascripts/boot', src='/javascripts/r.js')
   body!= partial('../public/theme/'+ theme +'/views/index')

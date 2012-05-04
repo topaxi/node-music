@@ -1,10 +1,13 @@
 // This script is loaded if all dependencies are
 // finished loading and the DOM is ready
-;(function(window) { 'use strict'; define('theme', function() {
+;(function(window) { 'use strict'
+
+define('theme', ['player', 'utils', 'superagent'],
+  function(Player, utils, request) {
 
 var jQueryUI = '1.8.18'
 
-requirejs.config({
+require.config({
   paths: {
       'jquery':    '//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min'
     , 'jquery-ui': '//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min'
@@ -15,8 +18,7 @@ var document   = window.document
   , setTimeout = window.setTimeout
   , location   = window.location
   , Math       = window.Math
-  , nm         = window.nm
-  , Player     = nm.Player
+  , formatTime = utils.formatTime
 
   , DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24
 
@@ -37,7 +39,7 @@ Player.on('lastfmTrackInfo', function displayLastfmCoverArt(trackInfo) {
 })
 
 function getPlaylists() {
-  nm.request('/playlist/all', function(res) {
+  request('/playlist/all', function(res) {
     if (!res.body) return
 
     var playlists  = Player.playlists = res.body
@@ -80,7 +82,7 @@ function newPlaylist() {
 
   if (!name) return false
 
-  nm.request.post('/playlist/save')
+  request.post('/playlist/save')
             .send(playlist)
             .end(function(res) {
               if (!res.text) return alert('fail')
@@ -135,7 +137,7 @@ function loadArtists(artists) {
       loadTracks(Player._tracks)
       $artists.children().removeClass('active')
 
-      nm.utils.Query.set('artist', null)
+      utils.Query.set('artist', null)
 
       $(this).addClass('active')
   }))
@@ -146,7 +148,7 @@ function loadArtists(artists) {
     $li.data('artist', artist).click(function() {
       loadTracks(filterTracksByArtist(artist))
 
-      nm.utils.Query.set('artist', artist._id)
+      utils.Query.set('artist', artist._id)
 
       $artists.children().removeClass('active')
       $li.addClass('active')
@@ -155,7 +157,7 @@ function loadArtists(artists) {
     $artists.append($li)
   })
 
-  var query = nm.utils.fromQuery(location.hash.slice(1))
+  var query = utils.fromQuery(location.hash.slice(1))
 
   if (query.artist) {
     $('#artists').animate({'scrollTop': $('#'+ query.artist).click().position().top - $('#artists').height() / 2})
@@ -169,7 +171,7 @@ function loadAlbums(albums) {
       loadTracks(Player._tracks)
       $albums.children().removeClass('active')
 
-      nm.utils.Query.set('album', null)
+      utils.Query.set('album', null)
 
       $(this).addClass('active')
   }))
@@ -180,7 +182,7 @@ function loadAlbums(albums) {
     $li.data('album', album).click(function() {
       loadTracks(filterTracksByAlbum(album))
 
-      nm.utils.Query.set('album', album._id)
+      utils.Query.set('album', album._id)
 
       $albums.children().removeClass('active')
       $li.addClass('active')
@@ -189,7 +191,7 @@ function loadAlbums(albums) {
     $albums.append($li)
   })
 
-  var query = nm.utils.fromQuery(location.hash.slice(1))
+  var query = utils.fromQuery(location.hash.slice(1))
 
   if (query.album) {
     $('#albums').animate({'scrollTop': $('#'+ query.album).click().position().top - $('#albums').height() / 2})
@@ -211,7 +213,7 @@ function trackrow(track) {
            ,   '<td>', artist(track.artists), '</td>'
            ,   '<td>', htmltruncate(album, 32, ' '), '</td>'
            ,   '<td>', track.genres, '</td>'
-           ,   '<td class="tac">', nm.utils.formatTime(track.duration), '</td>'
+           ,   '<td class="tac">', formatTime(track.duration), '</td>'
            ,   '<td class="tac">', parseInt(track.year) ? track.year.slice(0, 4) : '', '</td>'
            ,   '<td><a href="', track.path, '?download" title="Download" class="download ui-icon ui-icon-arrowthickstop-1-s ui-button ui-widget ui-corner-all ui-state-default"></a></td>'
            , '</tr>'
@@ -224,7 +226,7 @@ Player.on('load', function displayCurrentTrack(track) {
   var waveform
     , genre    = track.genres[0]
 
-  nm.utils.Query.set('track', track._id)
+  utils.Query.set('track', track._id)
 
   $('#buffered').width(800)
 
@@ -284,7 +286,7 @@ function createProgressbar() {
            })
 
   // I'm not sure why, but chromium sometimes won't trigger the progress event
-  $audio.on('timeupdate progress', nm.utils.throttle(function(e) {
+  $audio.on('timeupdate progress', utils.throttle(function(e) {
     var ranges   = this.buffered
       , duration = this.duration
       , width    = 800
@@ -306,12 +308,12 @@ function createProgressbar() {
       $progress.append($hover)
     })
 
-    $progress.mousemove(nm.utils.throttle(function(e) {
+    $progress.mousemove(utils.throttle(function(e) {
       var x = e.clientX - $waveform.offset().left
 
       $hover.width(x)
 
-      $time.text(nm.utils.formatTime((audio.duration || Player.currentTrack.duration) / $waveform.width() * x))
+      $time.text(formatTime((audio.duration || Player.currentTrack.duration) / $waveform.width() * x))
     }, 25))
 
     $progress.mouseleave(function() {
@@ -320,16 +322,16 @@ function createProgressbar() {
   })()
 
   $audio.on('durationchange', function() {
-    $duration.text(nm.utils.formatTime(audio.duration))
+    $duration.text(formatTime(audio.duration))
   })
 
-  $audio.on('timeupdate', nm.utils.throttle(function() {
+  $audio.on('timeupdate', utils.throttle(function() {
     var currentTime = this.currentTime
       , duration    = this.duration
 
     $indicator.width(~~($waveform.width() / (duration || Player.currentTrack.duration) * currentTime))
-    $time.text(nm.utils.formatTime(currentTime))
-    $remaining.text(nm.utils.formatTime(currentTime - (duration || Player.currentTrack.duration)))
+    $time.text(formatTime(currentTime))
+    $remaining.text(formatTime(currentTime - (duration || Player.currentTrack.duration)))
   }, 500))
 }
 
@@ -338,14 +340,14 @@ require(['jquery', 'menu'], function() {
   var $ = window.jQuery
 
   Player.getAllTracks(function(err, tracks) {
-    if (!nm.utils.Query.get('artist') && !nm.utils.Query.get('album')) {
+    if (!utils.Query.get('artist') && !utils.Query.get('album')) {
       loadTracks(tracks)
     }
 
     loadArtists(Player._artists)
     loadAlbums(Player._albums)
 
-    var query = nm.utils.fromQuery(location.hash.slice(1))
+    var query = utils.fromQuery(location.hash.slice(1))
 
     if (query.track) {
       Player.play(query.track)
@@ -435,7 +437,7 @@ function loggedOut() {
   $('#avatar').remove()
 
   $('<a id="login"><img alt="Sign in" src="/theme/default/images/sign_in_blue.png"></a>').appendTo(document.body).click(function() {
-    nm.utils.login.show()
+    utils.login.show()
   })
 
   Player.scrobble = false
@@ -454,7 +456,7 @@ function loggedIn(res) {
   var user = res.body
 
   if (user.email) {
-    nm.utils.gravatar.getAvatar(user.email, 64, function(avatar) {
+    utils.gravatar.getAvatar(user.email, 64, function(avatar) {
       // Yes target _blank... but node-music is a music player so we want to stay
       // on the page! :)
       $('<a id="avatar" href="http://gravatar.com/emails/" target="_blank">').append(
@@ -491,16 +493,16 @@ function loggedIn(res) {
   getPlaylists()
 }
 
-nm.utils.login.on('loggedOut', loggedOut)
-nm.utils.login.on('loggedIn',  loggedIn)
+utils.login.on('loggedOut', loggedOut)
+utils.login.on('loggedIn',  loggedIn)
 
-nm.utils.login.on('error', function() {
+utils.login.on('error', function() {
   console.log('Authentication error!', arguments)
 })
 
 function htmltruncate(str, limit, breakword, pad) {
   return [ '<span title="', str, '">'
-         ,   nm.utils.truncate(str, limit, breakword, pad)
+         ,   utils.truncate(str, limit, breakword, pad)
          , '</span>'
          ].join('')
 }

@@ -262,6 +262,68 @@ Player.on('load', function displayCurrentTrack(track) {
   document.title = $('#current').text()
 })
 
+Player.on('load',   displayNextInQueue)
+Player.on('queued', displayNextInQueue)
+
+function displayNextInQueue() {
+  redrawQueueList()
+
+  var $toggle = $('#queueNextWaveform')
+    , track
+
+  if (!(track = Player._queue[Player._queueIndex + 1])) {
+    $toggle.hide()
+    $('#queueNextTitle').text('Show queue')
+    $('#queueNextRemove').addClass('dn')
+
+    return
+  }
+
+  var waveform = '/wave/'+ track._id
+    , genre    = track.genres[0]
+
+  waveform += genre in COLORS ? '-'+ COLORS[genre].join('-') +'.png' : '.png'
+
+  $toggle[0].src = waveform
+
+  $('#queueNextTitle').text('Next track: '+ artist(track.artists) +' – '+ track.title)
+  $('#queueNextRemove').removeClass('dn')
+
+  $toggle.show()
+}
+
+function redrawQueueList() {
+  var $list = $('#queueList')
+
+  $list.empty()
+
+  Player._queue.forEach(queueEntry)
+
+  function queueEntry(track, i) {
+    var genre    = track.genres[0]
+      , waveform = '/wave/'+ track._id
+      , $img     = $('<img>')
+      , $text    = $('<span class="text">')
+      , $li      = $('<li>').append($img).append($text).data('track', track)
+
+    if (Player._queueIndex == i && Player.currentTrack === track) {
+      $li.addClass('current')
+    }
+    else if (Player._queueIndex >= i) {
+      $li.addClass('played')
+    }
+
+    $li.append('<span class="remove">X</div>')
+
+    waveform += genre in COLORS ? '-'+ COLORS[genre].join('-') +'.png' : '.png'
+
+    $img[0].src = waveform
+    $text.text(artist(track.artists) +' – '+ track.title)
+
+    $list.append($li)
+  }
+}
+
 function createProgressbar() {
   var audio      = Player.audio
     , $audio     = $(audio)
@@ -358,6 +420,39 @@ require(['jquery', 'menu'], function() {
 
   Player.bind()
 
+  $('#queueNextRemove').click(function(e) {
+    e.stopPropagation()
+
+    Player._queue.splice(Player._queueIndex + 1, 1)
+
+    displayNextInQueue()
+  })
+
+  $('#queueList').click(stopPropagation)
+
+  $('#queueList').on('click', '.remove', function(e) {
+    e.stopPropagation()
+
+    var li = $(this).parent()[0]
+      , i  = $('#queueList').children().index(li)
+
+    Player._queue.splice(i, 1)
+
+    if (i < Player._queueIndex + 1) {
+      Player._queueIndex -= 1
+    }
+
+    displayNextInQueue()
+  })
+
+  $('#queueList').on('click', '.text', function(e) {
+    e.stopPropagation()
+
+    var li = $(this).parent()[0]
+
+    Player.queue($('#queueList').children().index(li))
+  })
+
   $('#video').append(Player.audio)
 
   $('#play').toggleClass('paused', Player.audio.paused)
@@ -426,6 +521,16 @@ require(['jquery', 'menu'], function() {
   })
 
   createProgressbar()
+
+  $('#queue').click(function showQueue() {
+    var $list = $('#queueList')
+
+    if ($list.is(':visible')) return $list.hide()
+
+    redrawQueueList()
+
+    $list.show()
+  })
 })
 
 function loggedOut() {

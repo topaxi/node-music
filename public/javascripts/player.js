@@ -117,12 +117,20 @@ audio.preload    = 'auto'
 Player.currentTrack = { 'duration': 60 }
 
 Player._queue = []
-Player._queueIndex = 0
+Player._queueIndex = -1 // -1, means no track from the queue has been played yet
 
 Player.queue = function(track) {
   if (typeof track == 'string') return this.queue(this.getTrackById(track))
+  if (typeof track == 'number') {
+    this._queueIndex = track - 1
+    this.next()
+
+    return
+  }
 
   this._queue.push(track)
+
+  Player.emit('queued', track, this._queue.length)
 
   return this
 }
@@ -157,8 +165,9 @@ Player.back = function() {
 }
 
 Player.next = function() {
-  if (Player._queue.length > Player._queueIndex) {
-    Player.play(Player._queue[Player._queueIndex++])
+  // add 2 to index, as we are starting @ -1 ...
+  if (Player._queue.length >= Player._queueIndex + 2) {
+    Player.play(Player._queue[++Player._queueIndex])
   }
   else if (Player.shuffle) {
     var rnd     = Math.random()

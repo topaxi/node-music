@@ -6,6 +6,7 @@
   #next Next
   input#shuffle(type='checkbox')
   label(for='shuffle') Shuffle
+
   #repeat
     input#repeat0(type='radio', name='repeat', value="", checked=true)
     label(for='repeat0') No repeat
@@ -13,11 +14,20 @@
     label(for='repeat1') One
     input#repeatAll(type='radio', name='repeat', value="all")
     label(for='repeatAll') All
+
   #current
   #progress
+  #queue
+    #queueNext
+      img#queueNextWaveform
+      span#queueNextTitle Show queue
+      span#queueNextRemove.dn(title='Remove from queue') X
+    ul#queueList.dn.ui-corner-bottom
+
   #volume
   #search.dn
     input(placeholder='Search your music')
+
 #main
   #places
   #artists

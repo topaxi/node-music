@@ -95,7 +95,7 @@ label[for=shuffle] {
   background: rgba(255, 255, 255, .666);
 }
 
-#progress { position: absolute; top: 42px; left: 200px; overflow: hidden }
+#progress { position: absolute; top: 42px; left: 200px; height: 52px; overflow: hidden }
 #progress .progress, #progress .hover {
   position: absolute;
   top: 0;
@@ -121,12 +121,83 @@ label[for=shuffle] {
   cursor: default;
 }
 
-#waveform { width: 800px; height: 54px }
+#waveform { width: 800px; height: 52px }
 
 #duration, #time, #remaining { pointer-events: none; font-weight: bold}
 #duration { position: absolute; right: 5px; text-shadow: 2px 2px 3px #fff  }
 #time { position: absolute; right: 5px; text-shadow: 2px 2px 3px #000 }
 #remaining { position: absolute; right: -45px; bottom: 0; color: #333; text-shadow: -2px -2px 3px #fff }
+
+#queue {
+  width: 800px;
+  font-size: 11px;
+  line-height: 14px;
+  height: 14px;
+  position: absolute;
+  top: 94px;
+  left: 200px;
+  vertical-align: middle;
+  z-index: 1000;
+}
+
+#queueNext {
+  position: relative;
+}
+
+#queueNextWaveform, #queueList img {
+  width: 800px;
+  height: 14px;
+  position: absolute;
+  opacity: .3;
+  z-index: 0;
+}
+
+#queueNextTitle, #queueNextRemove {
+  cursor: pointer;
+  z-index: 10;
+  position: absolute;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, .8);
+}
+
+#queueNextRemove { right: 0 }
+
+#queueList {
+  top: 14px;
+  background: #ccc;
+  display: absolute;
+  width: 800px;
+  max-height: 480px;
+  overflow: auto;
+  z-index: 1000;
+  position: absolute;
+  padding-bottom: 3px;
+}
+
+#queueList span {
+  position: relative;
+  margin-left: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#queueList .current {
+  text-decoration: underline;
+}
+
+#queueList .played {
+  opacity: .3;
+}
+
+#queueList .remove {
+  position: absolute;
+  right: 5px;
+}
+
+#queueList li:hover {
+  opacity: 1;
+  background-color: #ddd;
+}
 
 .dn { display: none }
 

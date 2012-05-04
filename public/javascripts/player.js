@@ -153,19 +153,19 @@ Player.next = function() {
   }
   else if (Player.shuffle) {
     var rnd     = Math.random()
-      , $tracks = $$('tracks').find('tbody').children()
+      , $tracks = $('#tracks').find('tbody').children()
 
     // TODO: Maybe a better random algorithm?
     $tracks.eq(~~(($tracks.length+1) * rnd)).click()
   }
   else {
-    var $next = $$('tracks').find('.active').next(':visible')
+    var $next = $('#tracks').find('.active').next(':visible')
 
     if ($next.length) {
       $next.click()
     }
     else if (Player.repeat) {
-      $$('tracks').find('tbody').children().eq(0).click()
+      $('#tracks').find('tbody').children().eq(0).click()
     }
   }
 

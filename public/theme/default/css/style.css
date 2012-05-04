@@ -70,7 +70,7 @@ label input { float: right }
 
 #current {
   position: absolute;
-  top: 0;
+  top: 5px;
   left: 320px;
 }
 

@@ -387,8 +387,14 @@ require(['jquery', 'menu'], function() {
 
     $$('back').button({ 'icons': { 'primary': 'ui-icon-seek-first' }, 'text': false })
     $$('play').button({ 'icons': { 'primary': 'ui-icon-play'       }, 'text': false })
-    $$('next').button({ 'icons': { 'primary': 'ui-icon-seek-end'   }, 'text': false })
-    $$('shuffle').button().click(function() { Player.shuffle = !Player.shuffle })
+    $$('next').button({ 'icons': { 'primary': Player.shuffle ? 'ui-icon-shuffle' : 'ui-icon-seek-end' }, 'text': false })
+
+    $$('shuffle').button().click(function() {
+      Player.shuffle = !Player.shuffle
+
+      $$('next').button('option', 'icons', { 'primary': Player.shuffle ? 'ui-icon-shuffle' : 'ui-icon-seek-end' })
+    })
+
     $$('repeat').buttonset().on('click', 'input', function() {
       Player.repeat = this.value || false
     })

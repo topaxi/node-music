@@ -539,10 +539,10 @@ require(['jquery', 'menu'], function() {
 function searchFilter() {
   var val = $('#search').val().trim()
 
-  if (val) {
+  if (val.length > 2) {
     loadTracks(filterTracksByRegExp(new RegExp(val, 'i')))
   }
-  else {
+  else if ($('#tracks').find('tr').length - 1 != Player._tracks.length) {
     loadTracks(Player._tracks)
   }
 }

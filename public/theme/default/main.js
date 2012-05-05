@@ -5,7 +5,7 @@
 define('theme', ['player', 'utils', 'superagent'],
   function(Player, utils, request) {
 
-var jQueryUI = '1.8.18'
+var jQueryUI = '1.8.20'
 
 require.config({
   paths: {

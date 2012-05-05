@@ -213,7 +213,7 @@ function trackrow(track) {
            ,   '<td>', htmltruncate(track.title, 48, ' '), '</td>'
            ,   '<td>', artist(track.artists), '</td>'
            ,   '<td>', htmltruncate(album, 32, ' '), '</td>'
-           ,   '<td>', track.genres, '</td>'
+           ,   '<td>', track.genres.join(', '), '</td>'
            ,   '<td class="tac">', formatTime(track.duration), '</td>'
            ,   '<td class="tac">', parseInt(track.year) ? track.year.slice(0, 4) : '', '</td>'
            ,   '<td><a href="', track.path, '?download" title="Download" class="download ui-icon ui-icon-arrowthickstop-1-s ui-button ui-widget ui-corner-all ui-state-default"></a></td>'

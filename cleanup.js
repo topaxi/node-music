@@ -14,7 +14,7 @@ var fs       = require('fs')
   , i = 0
 
 function close() {
-  if (--i) mongoose.connection.close()
+  if (!--i) mongoose.connection.close()
 }
 
 Track.find({}, function(err, tracks) {
@@ -26,7 +26,7 @@ Track.find({}, function(err, tracks) {
 
       console.log('removing track', track)
 
-      track.remove(function() { done() })
+      track.remove(done)
     })
   }, close)
 })
@@ -39,7 +39,7 @@ Artist.find({}, function(err, artists) {
       if (!track) {
         console.log('removing artist', artist)
 
-        artist.remove(function() { done() })
+        artist.remove(done)
       }
       else done()
     })
@@ -54,7 +54,7 @@ Album.find({}, function(err, albums) {
       if (!track) {
         console.log('removing album', album)
 
-        album.remove(function() { done() })
+        album.remove(done)
       }
       else done()
     })

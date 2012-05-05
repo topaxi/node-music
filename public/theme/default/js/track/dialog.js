@@ -1,4 +1,6 @@
-define(['theme', 'superagent', 'jquery', 'jquery-ui'], function(theme, request, $) {
+define(['theme', 'player', 'superagent', 'jquery', 'jquery-ui'],
+    function(theme, Player, request, $) {
+
   var dialog   = {}
     , template = [ '<div><form name="trackForm">'
                    , '<input name="_id" type="hidden">'
@@ -52,11 +54,11 @@ define(['theme', 'superagent', 'jquery', 'jquery-ui'], function(theme, request, 
            .end(function(res) {
              if (!res.ok) return alert(res.body.error.message)
 
-             var track = nm.Player.getTrackById(res.body._id)
+             var track = Player.getTrackById(res.body._id)
 
              track.title   = res.body.title
-             track.artists = res.body.artists.map(function(id) { return nm.Player.getArtistById(id) })
-             //track.album   = nm.Player.getAlbumById(res.body.album)
+             track.artists = res.body.artists.map(function(id) { return Player.getArtistById(id) })
+             //track.album   = Player.getAlbumById(res.body.album)
              track.tags    = res.body.tags
              track.genres  = res.body.genres
              track.number  = res.body.number

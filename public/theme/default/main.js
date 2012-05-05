@@ -26,7 +26,6 @@ var document   = window.document
              , 'Drumstep':      [176,  32, 160]
              , 'Dubstep':       [192,  24,   0]
              , 'Bass':          [160,  16,   8]
-             , 'Electro House': [160,  48, 176]
              }
 
 Player.emitLastfmTrackInfo = true

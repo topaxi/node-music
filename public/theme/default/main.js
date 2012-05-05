@@ -531,7 +531,21 @@ require(['jquery', 'menu'], function() {
 
     $list.show()
   })
+
+  $('#search').on('keyup', utils.throttle(searchFilter, 500))
+              .on('blur',  searchFilter)
 })
+
+function searchFilter() {
+  var val = $('#search').val().trim()
+
+  if (val) {
+    loadTracks(filterTracksByRegExp(new RegExp(val, 'i')))
+  }
+  else {
+    loadTracks(Player._tracks)
+  }
+}
 
 function loggedOut() {
   // TODO: halp
@@ -621,6 +635,17 @@ function filterTracksByArtist(artist) {
 function filterTracksByAlbum(album) {
   return Player._tracks.filter(function(track) {
     return track.album === album
+  })
+}
+
+function filterTracksByRegExp(regexp) {
+  return Player._tracks.filter(function(track) {
+    if (regexp.test(track.title))                      return true
+    if (track.album && regexp.test(track.album.title)) return true
+
+    return track.artists.some(function(artist) {
+                                return regexp.test(artist.name)
+                              })
   })
 }
 

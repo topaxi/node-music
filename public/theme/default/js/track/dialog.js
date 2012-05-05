@@ -1,4 +1,4 @@
-define(['theme', 'jquery', 'jquery-ui'], function(theme, $) {
+define(['theme', 'superagent', 'jquery', 'jquery-ui'], function(theme, request, $) {
   var dialog   = {}
     , template = [ '<div><form name="trackForm">'
                    , '<input name="_id" type="hidden">'
@@ -45,25 +45,25 @@ define(['theme', 'jquery', 'jquery-ui'], function(theme, $) {
   }
 
   function save(updates, track) {
-    nm.request.post('/track/update')
-              .set('Accept', 'application/json')
-              .send(updates)
-              .type('json')
-              .end(function(res) {
-                if (!res.ok) return alert(res.body.error.message)
+    request.post('/track/update')
+           .set('Accept', 'application/json')
+           .send(updates)
+           .type('json')
+           .end(function(res) {
+             if (!res.ok) return alert(res.body.error.message)
 
-                var track = nm.Player.getTrackById(res.body._id)
+             var track = nm.Player.getTrackById(res.body._id)
 
-                track.title   = res.body.title
-                track.artists = res.body.artists.map(function(id) { return nm.Player.getArtistById(id) })
-                //track.album   = nm.Player.getAlbumById(res.body.album)
-                track.tags    = res.body.tags
-                track.genres  = res.body.genres
-                track.number  = res.body.number
-                track.year    = res.body.year
+             track.title   = res.body.title
+             track.artists = res.body.artists.map(function(id) { return nm.Player.getArtistById(id) })
+             //track.album   = nm.Player.getAlbumById(res.body.album)
+             track.tags    = res.body.tags
+             track.genres  = res.body.genres
+             track.number  = res.body.number
+             track.year    = res.body.year
 
-                $('#'+ track._id).replaceWith(theme.trackrow(track))
-              })
+             $('#'+ track._id).replaceWith(theme.trackrow(track))
+           })
   }
 
   function serialize(form) {

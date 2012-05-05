@@ -304,7 +304,7 @@ tr:nth-child(even), th {
 
 #login, #avatar {
   display: block;
-  right: 200px;
+  right: 100px;
   top: 0;
   position: absolute;
 }

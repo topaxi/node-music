@@ -1,11 +1,11 @@
-;(function(global) { 'use strict'; define(['jquery'], function($) {
+;(function(global) { 'use strict'
+
+define(['jquery', 'player', 'utils'], function($, Player, utils) {
 
 var document = global.document
-  , nm       = global.nm
-  , Player   = nm.Player
 
 $('#tracks').on('contextmenu', 'tr', function(e) {
-  if (!nm.utils.login.loggedIn) return
+  if (!utils.login.loggedIn) return
 
   $('.contextmenu').remove()
 
@@ -26,7 +26,7 @@ $('#tracks').on('contextmenu', 'tr', function(e) {
                  'sub':   Player.playlists,
                  'click': addToPlaylist(track) } ]
 
-  if (nm.utils.login.user.admin) {
+  if (utils.login.user.admin) {
     menu.push({ 'name':  'Edit track information'
               , 'click': editTrackInformation(track)
               })

@@ -1,7 +1,7 @@
 ;(function(window) { 'use strict'
 
 require.config({
-  paths: { 'crypto-md5': '//crypto-js.googlecode.com/files/2.5.3-crypto-md5'
+  paths: { 'crypto-md5': '/javascripts/2.5.3-crypto-md5'
          }
 })
 

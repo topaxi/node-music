@@ -27,7 +27,7 @@ var Album  = require('./lib/model/album')
 var finder = findit.find(config.library)
 
 finder.on('file', function(file, stat) {
-  if (file.match(rFileTester)) files.push(file)
+  if (rFileTester.test(file)) files.push(file)
 })
 
 finder.on('end', function() {

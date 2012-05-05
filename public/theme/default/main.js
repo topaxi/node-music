@@ -5,7 +5,7 @@
 define('theme', ['player', 'utils', 'superagent'],
   function(Player, utils, request) {
 
-var jQueryUI = '1.8.20'
+var jQueryUI = '1.8.19'
 
 require.config({
   paths: {
@@ -22,9 +22,11 @@ var document   = window.document
 
   , DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24
 
-  , COLORS = { 'Drum & Bass': [  0,  48, 160]
-             , 'Drumstep':    [176,  32, 160]
-             , 'Dubstep':     [192,  24,   0]
+  , COLORS = { 'Drum & Bass':   [  0,  48, 160]
+             , 'Drumstep':      [176,  32, 160]
+             , 'Dubstep':       [192,  24,   0]
+             , 'Bass':          [160,  16,   8]
+             , 'Electro House': [160,  48, 176]
              }
 
 Player.emitLastfmTrackInfo = true

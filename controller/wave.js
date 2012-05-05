@@ -29,6 +29,7 @@ module.exports = function(http) {
             'detail': config.waveform.detail
           , 'width':  config.waveform.width
           , 'height': config.waveform.height
+          , 'path':   pngPath
           , 'color':  [r, g, b]
         }
 

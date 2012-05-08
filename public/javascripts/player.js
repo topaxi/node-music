@@ -453,6 +453,6 @@ function cel(name) {
   return document.createElement(name)
 }
 
-return Player
+return nm.Player = Player
 
 }) })(this)

@@ -80,12 +80,13 @@ function getTrack(path, cb) {
           track.imported = Date.now()
         }
 
-        track.artists  = artists
-        track.path     = rpath
-        track.title    = tags.title
-        track.genres   = tags.genre
-        track.year     = tags.year
-        track.number   = tags.track.no
+        track.artists     = artists
+        track.path        = rpath
+        track.title       = tags.title
+        track.genres      = tags.genre
+        track.year        = tags.year
+        track.number      = tags.track.no
+        track.albumartist = tags.albumartist
 
         if (!tags.album) {
           return track.save(function(err) { cb(err, track) })

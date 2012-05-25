@@ -26,18 +26,19 @@ var Album  = require('./lib/model/album')
 
 var finder = findit.find(config.library)
 
-finder.on('file', function(file, stat) {
-  if (rFileTester.test(file)) files.push(file)
+finder.on('file', function(path, stat) {
+  if (rFileTester.test(path)) files.push([path, stat])
 })
 
 finder.on('end', function() {
-  async.forEachSeries(files, function(path, done) {
-    console.log('importing', (++i) +'/'+ files.length, path)
+  async.forEachSeries(files, function(file, done) {
+    var path = file[0]
+      , stat = file[1]
 
-    getTrack(path, function(err, track) {
+    i++
+
+    getTrack(file, function(err, track) {
       if (err) return done(err)
-
-      console.log('imported', track.path)
 
       if (track.duration) return done()
 
@@ -60,11 +61,19 @@ finder.on('end', function() {
   })
 })
 
-function getTrack(path, cb) {
-  var rpath = path.replace('./public', '')
+function getTrack(file, cb) {
+  var path  = file[0]
+    , stat  = file[1]
+    , rpath = path.replace('./public', '')
 
   Track.findOne({ 'path': rpath }, function(err, track) {
-    if (!config.forceTags && (err || track)) return cb(err, track)
+    if (err) return cb(err)
+
+    if (!config.forceTags && track && stat.mtime <= track.updated) {
+      return cb(err, track)
+    }
+
+    console.log('importing', i +'/'+ files.length, path)
 
     tags(path, function(err, tags) {
       if (err) return cb(err, track)
@@ -87,6 +96,7 @@ function getTrack(path, cb) {
         track.year        = tags.year
         track.number      = tags.track.no
         track.albumartist = tags.albumartist
+        track.updated     = Date.now()
 
         if (!tags.album) {
           return track.save(function(err) { cb(err, track) })

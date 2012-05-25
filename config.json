@@ -11,4 +11,7 @@
                            , "ogg": "libvorbis"
                            }
                }
+, "lastfm":    { "apiKey": "967ce1901a718b229e7795a485666a1e"
+               , "secret": "481afa56ce326649a15b9f584060a695"
+               }
 }

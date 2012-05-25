@@ -1,8 +1,9 @@
-var lfm  = require('../lib/lastfm')
-  , User = require('../lib/model/user')
+var lfm    = require('../lib/lastfm')
+  , User   = require('../lib/model/user')
+  , config = require('../config.json')
 
-lfm.setAPIKey('967ce1901a718b229e7795a485666a1e')
-lfm.setSecret('481afa56ce326649a15b9f584060a695')
+lfm.setAPIKey(config.lastfm.apiKey)
+lfm.setSecret(config.lastfm.secret)
 
 module.exports = function(http) {
   http.get('/lastfm/track/getInfo', function(req, res) {

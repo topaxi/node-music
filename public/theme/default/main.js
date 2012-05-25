@@ -596,7 +596,7 @@ function loggedIn(res) {
     Player.scrobble      = true
   }
   else {
-    $scrobble.append('<a href="http://www.last.fm/api/auth/?api_key=967ce1901a718b229e7795a485666a1e&cb=http://music.topaxi.ch/lastfm/auth">Scrobble</a>')
+    $scrobble.append('<a href="http://www.last.fm/api/auth/?api_key=967ce1901a718b229e7795a485666a1e&cb=http://'+ location.hostname +'/lastfm/auth">Scrobble</a>')
     $checkbox.prop('disabled', true)
   }
 

@@ -182,11 +182,9 @@ function getArtists(names, cb) {
 }
 
 function tags(path, cb) {
-  var s = fs.createReadStream(path)
-    , p = new mmd(s)
+  var p = new mmd(fs.createReadStream(path))
 
   p.on('metadata', function(data) { cb(null, data) })
-  p.on('done',     function(err)  { if (s.readable) s.destroy()
-                                    if (err) cb(err)
+  p.on('done',     function(err)  { if (err) cb(err)
                                   })
 }

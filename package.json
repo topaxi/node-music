@@ -4,14 +4,13 @@
   , "private": true
   , "dependencies": {
       "express": "2.5.x"
-    , "jade": "0.21.x"
-    , "binary": "0.2.x"
-    , "mongoose": "2.5.x"
+    , "jade": "0.26.x"
+    , "binary": "0.3.x"
+    , "mongoose": "2.7.x"
     , "session-mongoose": "0.0.x"
     , "musicmetadata": "0.1.5"
     , "node-gd": "0.1.x"
-    , "streamline": "0.2.x"
     , "async": "0.1.x"
-    , "fluent-ffmpeg": "0.3.x"
+    , "fluent-ffmpeg": "1.1.x"
   }
 }

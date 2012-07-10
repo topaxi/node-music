@@ -1,4 +1,5 @@
 node_modules
 public/music
 public/wave
+public/transcodes
 *.sw?

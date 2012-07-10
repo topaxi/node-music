@@ -8,9 +8,10 @@
     , "binary": "0.3.x"
     , "mongoose": "2.7.x"
     , "session-mongoose": "0.0.x"
-    , "musicmetadata": "0.1.5"
+    , "musicmetadata": "~0.1.7"
     , "node-gd": "0.1.x"
     , "async": "0.1.x"
     , "fluent-ffmpeg": "1.1.x"
+    , "findit": "0.1.x"
   }
 }

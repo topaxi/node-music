@@ -101,7 +101,7 @@ label[for=shuffle] {
   background: rgba(255, 255, 255, .666);
 }
 
-#progress { position: absolute; top: 42px; left: 200px; height: 52px; overflow: hidden }
+#progress { position: absolute; top: 42px; left: 200px; width: 800px; height: 52px; overflow: hidden }
 #progress .progress, #progress .hover {
   position: absolute;
   top: 0;

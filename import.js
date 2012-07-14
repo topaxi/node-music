@@ -9,7 +9,7 @@ var fs         = require('fs')
   , mmd        = require('musicmetadata')
   , async      = require('async')
   , findit     = require('findit')
-  , getWavInfo = require('./lib/convert').getWavInfo
+  , Metalib    = require('fluent-ffmpeg').Metadata
   , mongoose   = require('mongoose')
 
 var Album  = require('./lib/model/album')
@@ -42,13 +42,18 @@ finder.on('end', function() {
 
       if (track.duration) return done()
 
-      getWavInfo(path, function(err, wave) {
+      new Metalib(path).get(function(meta, err) {
         if (err) return done(err)
 
-        track.duration = wave.subchunk2Size / wave.byteRate
+        // Want full duration, not only seconds. Ffmpeg output looks like
+        // hh:mm:ss.fraction
+        var i = 2
+        track.duration = meta.durationraw.split(':').reduce(function(a, b) {
+          return !i ? a + +b : a + 60 * b * i--
+        }, 0)
 
         track.save(function() {
-          console.log('track duration of %d saved', track.duration)
+          console.log('track duration of %d seconds saved', track.duration)
 
           done()
         })

@@ -4,7 +4,7 @@
 
 var document     = window.document
   , head         = document.head
-  , jQueryMobile = '1.1.0'
+  , jQueryMobile = '1.1.1'
 
 require.config({
   paths: {

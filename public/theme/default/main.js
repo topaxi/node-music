@@ -2,15 +2,13 @@
 // finished loading and the DOM is ready
 ;(function(window) { 'use strict'
 
-define('theme', ['player', 'utils', 'superagent'],
+define(['player', 'utils', 'superagent'],
   function(Player, utils, request) {
 
 var jQueryUI = '1.8.19'
 
 require.config({
-  paths: {
-      'jquery':    '//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min'
-    , 'jquery-ui': '//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min'
+  paths: { 'jquery-ui':  '//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min'
   }
 })
 
@@ -399,9 +397,7 @@ function createProgressbar() {
 }
 
 // Load jQuery and get this thing started! :)
-require(['jquery', 'menu'], function() {
-  var $ = window.jQuery
-
+require(['jquery', 'menu'], function($) {
   Player.getAllTracks(function(err, tracks) {
     if (!utils.Query.get('artist') && !utils.Query.get('album')) {
       loadTracks(tracks)

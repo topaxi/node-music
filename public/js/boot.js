@@ -1,24 +1,30 @@
 ;(function(window) { 'use strict'
 
 require.config({
-  paths: { 'crypto-md5': '/javascripts/2.5.3-crypto-md5'
-         }
+    paths: { 'crypto-md5': '/js/lib/2.5.3-crypto-md5'
+           , 'underscore': '/js/lib/lodash-0.4.1.min'
+           , 'backbone':   '/js/lib/backbone-0.9.2.min'
+           , 'superagent': '/js/lib/superagent.min'
+           , 'jquery':     [ '//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min'
+                           , '/js/lib/jquery-1.7.2.min'
+                           ]
+           , 'theme':      '/theme/'+ nm.theme +'/main'
+           }
+  , shim: { 'superagent': { exports: 'superagent' }
+          , 'backbone':   { exports: 'Backbone', deps: [ 'underscore', 'jquery' ] }
+          // using lodash, which is requirejs compatible
+          //, 'underscore': { exports: '_' }
+          }
 })
-
-var document   = window.document
-  , superagent = window.superagent
-  , noop       = function noop() { }
-
-define('superagent', function() { return superagent })
 
 // Prevent browsers from dieing if there is no console and some calls
 // slipped into live code
-if (!window.console) window.console = { log: noop }
+if (!window.console) window.console = { log: function() { } }
 
 require(['utils', 'player'], function(utils) {
   require.config({ 'baseUrl': '/theme/'+ nm.theme +'/js' })
 
-  require(['/theme/'+ nm.theme +'/main.js'], function() {
+  require(['theme'], function() {
     utils.login.whoami()
   })
 })

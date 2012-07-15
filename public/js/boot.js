@@ -1,7 +1,7 @@
 ;(function(window) { 'use strict'
 
 require.config({
-    paths: { 'crypto-md5': '/js/lib/2.5.3-crypto-md5'
+    paths: { 'md5':        '/js/lib/crypto-md5-3.0.2.min'
            , 'underscore': '/js/lib/lodash-0.4.1.min'
            , 'backbone':   '/js/lib/backbone-0.9.2.min'
            , 'superagent': '/js/lib/superagent.min'
@@ -12,6 +12,7 @@ require.config({
            }
   , shim: { 'superagent': { exports: 'superagent' }
           , 'backbone':   { exports: 'Backbone', deps: [ 'underscore', 'jquery' ] }
+          , 'md5':        { exports: 'CryptoJS.MD5' }
           // using lodash, which is requirejs compatible
           //, 'underscore': { exports: '_' }
           }

@@ -8,14 +8,13 @@ var document     = window.document
 
 require.config({
   paths: {
-      'jquery':        '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min'
     , 'jquery-mobile': '//code.jquery.com/mobile/'+ jQueryMobile +'/jquery.mobile-'+ jQueryMobile +'.min'
   }
 })
 
 head.innerHTML += '<link rel="stylesheet" href="//code.jquery.com/mobile/'+ jQueryMobile +'/jquery.mobile-'+ jQueryMobile +'.min.css">'
 
-define('theme', ['player', 'utils', 'jquery', 'jquery-mobile'],
+define(['player', 'utils', 'jquery', 'jquery-mobile'],
   function(Player, utils, $, $m) {
 
 var body       = document.body

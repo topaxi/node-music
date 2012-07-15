@@ -45,6 +45,7 @@ function getPlaylists() {
       , $playlists = $('<ul id="playlists">')
 
     $playlists.append('<li id="newPlaylist">Create Playlist</li>')
+    $playlists.append('<li id="newSmartPlaylist">Create Smart-Playlist</li>')
 
     for (var i = 0, l = playlists.length; i < l; ++i) {
       $playlists.append('<li id="'+ playlists[i]._id +'">'+ playlists[i].name +'</li>')
@@ -53,7 +54,8 @@ function getPlaylists() {
     }
 
     $playlists.on('click', 'li', function() {
-      if (this.id == 'newPlaylist') return newPlaylist()
+      if (this.id == 'newPlaylist')      return newPlaylist()
+      if (this.id == 'newSmartPlaylist') return newSmartPlaylist()
 
       for (var l = playlists.length; l--; ) {
         if (this.id == playlists[l]._id) {
@@ -63,16 +65,90 @@ function getPlaylists() {
         }
       }
     }).appendTo('#places')
+
+    $playlists.on('contextmenu', 'li', function(e) {
+      e.preventDefault()
+
+      for (var l = playlists.length; l--; ) {
+        if (this.id == playlists[l]._id) {
+          newSmartPlaylist(playlists[l])
+
+          return
+        }
+      }
+    })
   })
 
   function populatePlaylist(playlist) {
     var tracks = Player._tracks
 
-    for (var l = tracks.length; l--; )
-      for (var ll = playlist.tracks.length; ll--; )
-        if (playlist.tracks[ll] == tracks[l]._id)
-          playlist.tracks[ll] = tracks[l]
+    if (playlist.tracks.length) {
+      for (var l = tracks.length; l--; )
+        for (var ll = playlist.tracks.length; ll--; )
+          if (playlist.tracks[ll] == tracks[l]._id)
+            playlist.tracks[ll] = tracks[l]
+    }
+    else if (playlist.filter || playlist.source) {
+      if (playlist.filter) playlist.source = playlistFilterToSource(playlist.filter)
+
+      var fun = new Function('track', playlist.source)
+
+      playlist.tracks = Player._tracks.filter(fun)
+    }
   }
+}
+
+function newSmartPlaylist(playlist) {
+  var $dialog = $('<div title="Create Smart-Playlist">'+
+                    '<form id="smartPlaylistForm">'+
+                      '<input name="name">'+
+                      '<textarea name="source" rows="7" cols="20"></textarea>'+
+                    '</form>'+
+                  '</div>')
+    , create = true
+
+  if (playlist) {
+    $dialog.find('[name=name]')  .val(playlist.name)
+    $dialog.find('[name=source]').val(playlist.source)
+    create = false
+  }
+  else {
+    playlist = { }
+  }
+
+  // TODO
+  playlist.filter = []
+
+  $dialog.dialog({
+    'buttons': { 'Ok': function(e, ui) {
+      var source = $dialog.find('[name=source]').val()
+
+      playlist.name = $dialog.find('[name=name]')  .val()
+
+      if (playlist.source != source) {
+        playlist.source = source
+
+        // Source changed, clear track cache
+        playlist.tracks = []
+      }
+
+      // TODO: Do not send the whole tracklist (if available)
+      //       track cache should only stay locally
+      request.post('/playlist/save')
+                .send(playlist)
+                .end(function(res) {
+                  if (!res.text) return alert('fail')
+
+                  if (create && playlist._id != res.body) {
+                    playlist._id = res.body
+
+                    Player.playlists.push(playlist)
+
+                    $('#playlists').append('<li id="'+ playlist._id +'">'+ playlist.name +'</li>')
+                  }
+                })
+    } }
+  })
 }
 
 function newPlaylist() {

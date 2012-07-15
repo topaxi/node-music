@@ -20,46 +20,49 @@ module.exports = function(http) {
       req.session.user = user
       user.markModified('playlists')
 
-      if (req.body) {
-        var p        = req.body
-          , playlist
+      if (!req.body) {
+        res.send(false)
 
-        if (p._id && (playlist = user.playlists.id(p._id))) {
-          playlist.name    = p.name
-          playlist.filters = p.filters
+        return
+      }
 
-          playlist.tracks.length = 0
+      var p        = req.body
+        , playlist
 
-          p.tracks.forEach(function(track) {
-            playlist.tracks.push(typeof track == 'string' ? track : track._id)
-          })
+      if (p._id && (playlist = user.playlists.id(p._id))) {
+        playlist.name    = p.name
+        playlist.filters = p.filters
+        playlist.source  = p.source
 
-          user.save(function() {
-            req.session.user = user
-            res.send(playlist._id)
-          })
-        }
-        else {
-          playlist = new Playlist
-          playlist.name    = p.name
-          playlist.tracks  = p.tracks
-          playlist.filters = p.filters
+        playlist.tracks.length = 0
 
-          if (user.playlists) {
-            user.playlists.push(playlist)
-          }
-          else {
-            user.playlists = [playlist]
-          }
+        p.tracks.forEach(function(track) {
+          playlist.tracks.push(typeof track == 'string' ? track : track._id)
+        })
 
-          user.save(function() {
-            req.session.user = user
-            res.send(playlist._id)
-          })
-        }
+        user.save(function() {
+          req.session.user = user
+          res.send(playlist._id)
+        })
       }
       else {
-        res.send(false)
+        playlist = new Playlist
+        playlist.name    = p.name
+        playlist.tracks  = p.tracks
+        playlist.filters = p.filters
+        playlist.source  = p.source
+
+        if (user.playlists) {
+          user.playlists.push(playlist)
+        }
+        else {
+          user.playlists = [playlist]
+        }
+
+        user.save(function() {
+          req.session.user = user
+          res.send(playlist._id)
+        })
       }
     })
   })

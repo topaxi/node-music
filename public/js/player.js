@@ -294,12 +294,11 @@ function populateTrack(track) {
     track.album = Player.getAlbumById(track.album)
   }
 
-  for (var i = 0, l = track.artists.length; i < l; ++i)
-    if (typeof track.artists[i] == 'string')
-      for (var ii = 0, ll = Player._artists.length; ii < ll; ++ii)
-        if (track.artists[i] == Player._artists[ii]._id) {
-          track.artists[i] = Player._artists[ii]; break
-        }
+  for (var i = 0, l = track.artists.length; i < l; ++i) {
+    if (typeof track.artists[i] == 'string') {
+      track.artists[i] = Player.getArtistById(track.artists[i])
+    }
+  }
 
   return track
 }

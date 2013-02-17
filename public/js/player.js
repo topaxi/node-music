@@ -446,6 +446,8 @@ function sortTracksByAlbum(tracks) {
 
     if (a.artists[0].name < b.artists[0].name) return -1
     if (a.artists[0].name > b.artists[0].name) return  1
+
+    return 0
   })
 }
 

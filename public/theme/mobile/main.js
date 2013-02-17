@@ -4,12 +4,11 @@
 
 var document     = window.document
   , head         = document.head
-  , jQueryMobile = '1.1.1'
+  , jQueryMobile = '1.3.0-rc.1'
 
 require.config({
-  paths: {
-    , 'jquery-mobile': '//code.jquery.com/mobile/'+ jQueryMobile +'/jquery.mobile-'+ jQueryMobile +'.min'
-  }
+  paths: { 'jquery-mobile': '//code.jquery.com/mobile/'+ jQueryMobile +'/jquery.mobile-'+ jQueryMobile +'.min'
+         }
 })
 
 head.innerHTML += '<link rel="stylesheet" href="//code.jquery.com/mobile/'+ jQueryMobile +'/jquery.mobile-'+ jQueryMobile +'.min.css">'

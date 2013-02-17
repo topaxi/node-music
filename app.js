@@ -5,9 +5,9 @@
  */
 
 var express         = require('express')
-  , SessionMongoose = require('session-mongoose')
+  , SessionMongoose = require('session-mongoose')(express)
 
-var app = module.exports = express.createServer()
+var app = module.exports = express()
 
 // Configuration
 
@@ -47,7 +47,7 @@ controller('transcode')
 
 app.listen(3000)
 console.log("Express server listening on port %d in %s mode",
-  app.address().port, app.settings.env)
+  3000, app.settings.env)
 
 function controller(c) {
   require('./controller/'+ c)(app)

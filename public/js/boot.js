@@ -1,12 +1,12 @@
 ;(function(window) { 'use strict'
 
 require.config({
-    paths: { 'md5':        '/js/lib/crypto-md5-3.0.2.min'
-           , 'underscore': '/js/lib/lodash-0.4.1.min'
-           , 'backbone':   '/js/lib/backbone-0.9.2.min'
+    paths: { 'md5':        '/js/lib/crypto-md5-3.1.2.min'
+           , 'underscore': '/js/lib/lodash-1.0.0.min'
+           , 'backbone':   '/js/lib/backbone-0.9.10.min'
            , 'superagent': '/js/lib/superagent.min'
-           , 'jquery':     [ '//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min'
-                           , '/js/lib/jquery-1.7.2.min'
+           , 'jquery':     [ '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min'
+                           , '/js/lib/jquery-1.9.1.min'
                            ]
            , 'theme':      '/theme/'+ nm.theme +'/main'
            }

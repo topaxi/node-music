@@ -6,5 +6,9 @@ html
     link(rel='stylesheet', href='/theme/#{theme}/css/style.css')
     script
       nm={theme:'#{theme}'}
-    script(data-main='/js/boot', src='/js/lib/require-2.0.4.js')
-  body!= partial('../public/theme/'+ theme +'/views/index')
+    script(data-main='/js/boot', src='/js/lib/require-2.1.4.js')
+  body
+    if theme == 'mobile'
+      include ../public/theme/mobile/views/index
+    else
+      include ../public/theme/default/views/index

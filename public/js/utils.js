@@ -1,6 +1,6 @@
 ;(function(window) { 'use strict'
 
-define('utils', ['eventemitter'], function(EventEmitter) {
+define('utils', ['eventemitter', 'superagent'], function(EventEmitter, request) {
 
 var document  = window.document
   , location  = window.location
@@ -124,16 +124,16 @@ login.show = function() {
         return
       }
 
-      superagent.post('/login')
-                .send({ 'assertion': assertion })
-                .end(function(res) {
-                  if (!res) return login.emit('loggedOut')
+      request.post('/login')
+             .send({ 'assertion': assertion })
+             .end(function(res) {
+               if (!res) return login.emit('loggedOut')
 
-                  login.loggedIn = true
-                  login.user     = res.body
+               login.loggedIn = true
+               login.user     = res.body
 
-                  login.emit('loggedIn', res)
-                })
+               login.emit('loggedIn', res)
+             })
     })
   })
 }
@@ -141,7 +141,7 @@ login.show = function() {
 login.whoami = function() {
   login.loggedIn = false
 
-  superagent.post('/login/whoami', null, function(res) {
+  request.post('/login/whoami', null, function(res) {
     if (res.error) return login.emit('error', res)
     if (!res.body) return login.emit('loggedOut')
 
@@ -154,7 +154,7 @@ login.whoami = function() {
 utils.bind(document, 'login', login.show)
 
 utils.bind(document, 'logout', function(e) {
-  superagent.post('/login/logout', function(res) {
+  request.post('/login/logout', function(res) {
     login.emit('loggedOut')
   })
 })

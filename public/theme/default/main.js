@@ -5,7 +5,7 @@
 define(['player', 'utils', 'superagent'],
   function(Player, utils, request) {
 
-var jQueryUI = '1.8.19'
+var jQueryUI = '1.10.1'
 
 require.config({
   paths: { 'jquery-ui':  '//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min'

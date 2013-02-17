@@ -5,7 +5,6 @@ define('utils', ['eventemitter', 'superagent'], function(EventEmitter, request) 
 var document  = window.document
   , location  = window.location
   , navigator = window.navigator
-  , JSON      = window.JSON
   , utils     = {}
   , Query     = {}
 

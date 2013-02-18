@@ -1,7 +1,10 @@
 ;(function(window) { 'use strict'
 
 require.config({
-    paths: { 'md5':        '/js/lib/crypto-md5-3.1.2.min'
+    baseUrl: '/theme/'+ nm.theme +'/js'
+  , paths: { 'utils':      '/js/utils'
+           , 'player':     '/js/player'
+           , 'md5':        '/js/lib/crypto-md5-3.1.2.min'
            , 'underscore': '/js/lib/lodash-1.0.0.min'
            , 'backbone':   '/js/lib/backbone-0.9.10.min'
            , 'superagent': '/js/lib/superagent.min'
@@ -22,12 +25,8 @@ require.config({
 // slipped into live code
 if (!window.console) window.console = { log: function() { } }
 
-require(['utils', 'player'], function(utils) {
-  require.config({ 'baseUrl': '/theme/'+ nm.theme +'/js' })
-
-  require(['theme'], function() {
-    utils.login.whoami()
-  })
+require(['utils', 'player', 'theme'], function(utils) {
+  utils.login.whoami()
 })
 
 /*!

@@ -16,8 +16,6 @@ require.config({
   , shim: { 'superagent': { exports: 'superagent' }
           , 'backbone':   { exports: 'Backbone', deps: [ 'underscore', 'jquery' ] }
           , 'md5':        { exports: 'CryptoJS.MD5' }
-          // using lodash, which is requirejs compatible
-          //, 'underscore': { exports: '_' }
           }
 })
 

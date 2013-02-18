@@ -389,13 +389,8 @@ Player.getTrackById = function(trackId) {
   return null
 }
 
-Player.getArtistById = function(id) {
-  return artistmap[id] || null
-}
-
-Player.getAlbumById = function(id) {
-  return albummap[id] || null
-}
+Player.getArtistById = function(id) { return artistmap[id] || null }
+Player.getAlbumById  = function(id) { return albummap [id] || null }
 
 function sortByAlphabet(array) {
   var args = Array.prototype.slice.call(arguments, 1)

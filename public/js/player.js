@@ -416,25 +416,6 @@ function sortByAlphabet(array) {
   })
 }
 
-function sortByNumber(array) {
-  var args = Array.prototype.slice.call(arguments, 1)
-
-  array.sort(function(a, b) {
-    for (var i = 0, l = args.length; i < l; ++i) {
-      if (!a[args[i]]) a = 0
-      else if(a)       a = a[args[i]]
-
-      if (!b[args[i]]) b = 0
-      else if(b)       b = b[args[i]]
-    }
-
-    if (a < b) return -1
-    if (a > b) return  1
-
-    return 0
-  })
-}
-
 function sortByAlbum(a, b) {
   var a_name = a.album ? a.album.title : ''
     , b_name = b.album ? b.album.title : ''

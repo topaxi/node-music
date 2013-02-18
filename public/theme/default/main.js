@@ -109,13 +109,13 @@ function loadTracks(tracks, cb) {
   $table.append($tbody)
 
   $tbody.on('click', 'tr', function() {
-    Player.play($(this).data('track'))
+    Player.play(this.id)
   })
 
   $table.find('.queue').on('click', function(e) {
     e.stopPropagation()
 
-    Player.queue($(this.parentNode.parentNode).data('track'))
+    Player.queue(this.parentNode.parentNode.id)
   })
 
   if ($.ui) {
@@ -205,18 +205,18 @@ function trackrow(track) {
   var album = track && track.album && track.album.title
     , isNew = Date.now() - +track.imported < DAY_IN_MILLISECONDS
 
-  return $([ '<tr id="', track._id, '"', isNew ? ' class="new" title="New!"' : '', '>'
-           ,   '<td>', '<a title="Add to queue" class="queue ui-icon ui-icon-circle-plus"></a>', '</td>'
-           ,   '<td class="tar">', track.number ? track.number + '.' :  '', '</td>'
-           ,   '<td>', htmltruncate(track.title, 48, ' '), '</td>'
-           ,   '<td>', artist(track.artists), '</td>'
-           ,   '<td>', htmltruncate(album, 32, ' '), '</td>'
-           ,   '<td>', track.genres.join(', '), '</td>'
-           ,   '<td class="tac">', formatTime(track.duration), '</td>'
-           ,   '<td class="tac">', parseInt(track.year, 10) ? track.year.slice(0, 4) : '', '</td>'
-           ,   '<td><a href="', track.path, '?download" title="Download" class="download ui-icon ui-icon-arrowthickstop-1-s ui-button ui-widget ui-corner-all ui-state-default"></a></td>'
-           , '</tr>'
-           ].join('')).data('track', track)
+  return $('<tr id="'+ track._id +'"'+ (isNew ? ' class="new" title="New!"' : '') +'>'
+             + '<td><a title="Add to queue" class="queue ui-icon ui-icon-circle-plus"></a></td>'
+             + '<td class="tar">'+ (track.number ? track.number + '.' :  '') +'</td>'
+             + '<td>'+ htmltruncate(track.title, 48, ' ') +'</td>'
+             + '<td>'+ artist(track.artists) +'</td>'
+             + '<td>'+ (album ? htmltruncate(album, 32, ' ') : '') +'</td>'
+             + '<td>'+ track.genres.join(', ') +'</td>'
+             + '<td class="tac">'+ formatTime(track.duration) +'</td>'
+             + '<td class="tac">'+ (parseInt(track.year, 10) ? track.year.slice(0, 4) : '') +'</td>'
+             + '<td><a href="'+ track.path +'?download" title="Download" class="download ui-icon ui-icon-arrowthickstop-1-s ui-button ui-widget ui-corner-all ui-state-default"></a></td>'
+           + '</tr>'
+          )
 }
 
 function stopPropagation(e) { e.stopPropagation() }
@@ -303,7 +303,7 @@ function redrawQueueList() {
       , waveform = '/wave/'+ track._id
       , $img     = $('<img>')
       , $text    = $('<span class="text">')
-      , $li      = $('<li>').append($img).append($text).data('track', track)
+      , $li      = $('<li>').append($img).append($text)
 
     if (Player._queueIndex == i && Player.currentTrack === track) {
       $li.addClass('current')
@@ -617,10 +617,9 @@ utils.login.on('error', function() {
 })
 
 function htmltruncate(str, limit, breakword, pad) {
-  return [ '<span title="', str, '">'
-         ,   utils.truncate(str, limit, breakword, pad)
-         , '</span>'
-         ].join('')
+  return '<span title="'+ str +'">'
+           + utils.truncate(str, limit, breakword, pad)
+         +'</span>'
 }
 
 function filterTracksByArtist(artist) {

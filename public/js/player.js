@@ -111,9 +111,13 @@ audio.autobuffer = true
 audio.controls   = false
 audio.preload    = 'auto'
 
-//audio.addEventListener('play', function() {
-//  document.title = '▶ '+ document.title
-//})
+utils.bind(audio, 'play', function() {
+  document.title = '▶ '+ Player.currentTrack.title +' by '+ Player.currentTrack.artist
+})
+utils.bind(audio, 'pause', function() {
+  document.title = Player.currentTrack.title +' by '+ Player.currentTrack.artist
+})
+
 Player.currentTrack = { 'duration': 60 }
 
 Player._queue = []

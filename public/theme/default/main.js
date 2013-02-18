@@ -253,8 +253,6 @@ Player.on('load', function displayCurrentTrack(track) {
                      , track.album ? '<span class="h">from</span>' : ''
                      , track.album ? track.album.title : ''
                      ].join(' '))
-
-  document.title = $('#current').text()
 })
 
 Player.on('load',   displayNextInQueue)

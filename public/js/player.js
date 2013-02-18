@@ -9,13 +9,14 @@ define('player', deps, function(EventEmitter, request, utils) {
 
 var document     = window.document
   , location     = window.location
-  , Player       = Player = new EventEmitter
+  , Player       = window.Player = new EventEmitter
   // TODO: How do we decide on audio or video? Maybe use always video?
   //       If we use video, what will happen to devices like iphone?
   , audio        = Player.audio = cel(nm.theme == 'mobile' ? 'audio' : 'video')
   , localStorage = window.localStorage
   , Math         = window.Math
   , noop         = function noop() { }
+  , albummap, artistmap
 
 if (isNaN(localStorage.volume)) {
   localStorage.volume = audio.volume
@@ -311,11 +312,18 @@ Player.getAllAlbums = function(cb) {
   if (self._albums) return cb(null, self._albums)
 
   request('/albums/all', function(res) {
-    if (!res.error) {
-      sortByAlphabet(res.body, 'title')
+    if (res.error) return cb(res)
+
+    sortByAlphabet(res.body, 'title')
+
+    var map = {}
+    for (var i = res.body.length; i--; ) {
+      map[res.body[i]._id] = res.body[i]
     }
 
-    cb(res.error ? res : null, self._albums = res.body)
+    albummap = map
+
+    cb(null, self._albums = res.body)
   })
 }
 
@@ -327,11 +335,18 @@ Player.getAllArtists = function(cb) {
   if (self._artists) return cb(null, self._artists)
 
   request('/artists/all', function(res) {
-    if (!res.error) {
-      sortByAlphabet(res.body, 'name')
+    if (res.error) return cb(res)
+
+    sortByAlphabet(res.body, 'name')
+
+    var map = {}
+    for (var i = res.body.length; i--; ) {
+      map[res.body[i]._id] = res.body[i]
     }
 
-    cb(res.error ? res : null, self._artists = res.body)
+    artistmap = map
+
+    cb(null, self._artists = res.body)
   })
 }
 
@@ -374,24 +389,12 @@ Player.getTrackById = function(trackId) {
   return null
 }
 
-Player.getArtistById = function(artistId) {
-  var artists = this._artists
-
-  for (var i = artists.length; i--;) {
-    if (artists[i]._id == artistId) return artists[i]
-  }
-
-  return null
+Player.getArtistById = function(id) {
+  return artistmap[id] || null
 }
 
-Player.getAlbumById = function(albumId) {
-  var albums = this._albums
-
-  for (var i = albums.length; i--;) {
-    if (albums[i]._id == albumId) return albums[i]
-  }
-
-  return null
+Player.getAlbumById = function(id) {
+  return albummap[id] || null
 }
 
 function sortByAlphabet(array) {

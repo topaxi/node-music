@@ -617,6 +617,8 @@ utils.login.on('error', function() {
 })
 
 function htmltruncate(str, limit, breakword, pad) {
+  if (typeof str !== 'string' || str.length <= limit) return str
+
   return '<span title="'+ str +'">'
            + utils.truncate(str, limit, breakword, pad)
          +'</span>'

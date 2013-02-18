@@ -197,10 +197,6 @@ function loadAlbums(albums) {
   }
 }
 
-function artist(artists) {
-  return artists.map(function(a) { return a.name }).join(' & ')
-}
-
 function trackrow(track) {
   var album = track && track.album && track.album.title
     , isNew = Date.now() - +track.imported < DAY_IN_MILLISECONDS
@@ -209,7 +205,7 @@ function trackrow(track) {
              + '<td><a title="Add to queue" class="queue ui-icon ui-icon-circle-plus"></a></td>'
              + '<td class="tar">'+ (track.number ? track.number + '.' :  '') +'</td>'
              + '<td>'+ htmltruncate(track.title, 48, ' ') +'</td>'
-             + '<td>'+ artist(track.artists) +'</td>'
+             + '<td>'+ track.artist +'</td>'
              + '<td>'+ (album ? htmltruncate(album, 32, ' ') : '') +'</td>'
              + '<td>'+ track.genres.join(', ') +'</td>'
              + '<td class="tac">'+ formatTime(track.duration) +'</td>'

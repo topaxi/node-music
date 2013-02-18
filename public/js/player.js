@@ -31,7 +31,7 @@ Player.scrobble            = false
 Player.updateNowPlaying = function updateNowPlaying(track) {
   if (!this.scrobble) return
 
-  var artist = track.artists.map(function(a) { return a.name }).join(' & ')
+  var artist = track.artist
     , params = { 'title':    track.title
                , 'artist':   artist
                , 'duration': track.duration
@@ -51,12 +51,11 @@ Player.updateNowPlaying = function updateNowPlaying(track) {
 Player.on('load', Player.updateNowPlaying)
 
 Player.on('load', function getLastfmTrackInfo(track) {
-  function getName(artist) { return artist.name }
-
   if (Player.emitLastfmTrackInfo) {
     request('/lastfm/track/getInfo')
       .send({ 'track':  track.title
-            , 'artist': track.artists.map(getName).join(' & ') })
+            , 'artist': track.artist
+            })
       .type('json')
       .end(function(res) {
         Player.emit('lastfmTrackInfo', res.body)
@@ -300,6 +299,8 @@ function populateTrack(track) {
       track.artists[i] = Player.getArtistById(track.artists[i])
     }
   }
+
+  track.artist = track.artists.map(function(a) { return a.name }).join(' & ')
 
   return track
 }

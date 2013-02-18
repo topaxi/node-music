@@ -25,7 +25,7 @@ require.config({
 // slipped into live code
 if (!window.console) window.console = { log: function() { } }
 
-require(['superagent', 'utils', 'player', 'theme'], function(utils) {
+require(['utils', 'superagent', 'player', 'theme'], function(utils) {
   utils.login.whoami()
 })
 

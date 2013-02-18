@@ -249,7 +249,7 @@ Player.on('load', function displayCurrentTrack(track) {
 
   $('#current').html([ '<strong>', track.title, '</strong><br>'
                      , '<span class="h">by</span>'
-                     , artist(track.artists)
+                     , track.artist
                      , track.album ? '<span class="h">from</span>' : ''
                      , track.album ? track.album.title : ''
                      ].join(' '))
@@ -281,7 +281,7 @@ function displayNextInQueue() {
 
   $toggle[0].src = waveform
 
-  $('#queueNextTitle').text('Next track: '+ artist(track.artists) +' – '+ track.title)
+  $('#queueNextTitle').text('Next track: '+ track.artist +' – '+ track.title)
   $('#queueNextRemove').removeClass('dn')
 
   $toggle.show()
@@ -313,7 +313,7 @@ function redrawQueueList() {
     waveform += genre in COLORS ? '-'+ COLORS[genre].join('-') +'.png' : '.png'
 
     $img[0].src = waveform
-    $text.text(artist(track.artists) +' – '+ track.title)
+    $text.text(track.artist +' – '+ track.title)
 
     $list.append($li)
   }

@@ -1,6 +1,5 @@
-;(function(window) { 'use strict'
-
-define('utils', ['eventemitter', 'superagent'], function(EventEmitter, request) {
+define('utils', ['global', 'eventemitter', 'superagent'],
+  function(window, EventEmitter, request) { 'use strict';
 
 var document  = window.document
   , location  = window.location
@@ -177,4 +176,4 @@ utils.truncate = function truncate(str, limit, breakword, pad) {
 
 return utils
 
-}) })(this)
+})

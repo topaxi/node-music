@@ -1,6 +1,5 @@
-;(function(global) { 'use strict'
-
-define(['jquery', 'player', 'utils'], function($, Player, utils) {
+define(['global', 'jquery', 'player', 'utils'],
+  function(global, $, Player, utils) { 'use strict';
 
 var document = global.document
 
@@ -89,4 +88,4 @@ function addToPlaylist(track) {
   }
 }
 
-}) })(this)
+})

@@ -1,7 +1,8 @@
-define(['theme', 'player', 'superagent', 'jquery', 'jquery-ui'],
-    function(theme, Player, request, $) {
+define(['global', 'theme', 'player', 'superagent', 'jquery', 'jquery-ui'],
+    function(global, theme, Player, request, $) { 'use strict';
 
-  var dialog   = {}
+  var document = global.document
+    , dialog   = {}
     , template = [ '<div><form name="trackForm">'
                    , '<input name="_id" type="hidden">'
                    , '<label class="db">Title: <input name="title"></label>'

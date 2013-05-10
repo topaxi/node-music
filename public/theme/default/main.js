@@ -1,14 +1,12 @@
 // This script is loaded if all dependencies are
 // finished loading and the DOM is ready
-;(function(window) { 'use strict'
-
-define(['player', 'utils', 'superagent'],
-  function(Player, utils, request) {
+define(['global', 'player', 'utils', 'superagent'],
+  function(window, Player, utils, request) { 'use strict';
 
 var jQueryUI = '1.10.1'
 
 require.config({
-  paths: { 'jquery-ui':  '//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min'
+  paths: { 'jquery-ui': '//ajax.googleapis.com/ajax/libs/jqueryui/'+ jQueryUI +'/jquery-ui.min'
   }
 })
 
@@ -644,4 +642,4 @@ function filterTracksByRegExp(regexp) {
 // Expose theming functions for other scripts
 return { 'trackrow': trackrow }
 
-}) })(this)
+})

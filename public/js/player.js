@@ -1,11 +1,6 @@
-;(function(window) { 'use strict'
-
-var deps = [ 'eventemitter'
-           , 'superagent'
-           , 'utils'
-           ]
-
-define('player', deps, function(EventEmitter, request, utils) {
+define('player',
+  [ 'global', 'eventemitter', 'superagent', 'utils' ],
+  function(window, EventEmitter, request, utils) { 'use strict';
 
 var document     = window.document
   , location     = window.location
@@ -438,4 +433,4 @@ function cel(name) {
 
 return nm.Player = Player
 
-}) })(this)
+})

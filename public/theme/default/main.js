@@ -93,12 +93,15 @@ function newPlaylist() {
 }
 
 function loadTracks(tracks) {
-  var $table = $('<table>').appendTo($('#tracks').empty())
-    , $tbody = $('<tbody>')
+  var $tracks = $('#tracks')
+    , $table  = $('<table>')
+    , $tbody  = $('<tbody>')
+
+  $tracks[0].innerHTML = ''
 
   $table.append('<thead><tr><th style="width:16px"></th><th style="width:16px"></th><th>Track</th><th>Artist</th><th>Album</th><th>Genres</th><th style="width:64px">Duration</th><th style="width:1px">Year</th><th style="width:24px"></th></tr></thead>')
 
-  if (!tracks) return
+  if (!tracks) return $tracks.append($table)
 
   // DOM is slow, js string concat is way faster
   var tbodyContent = ''
@@ -108,21 +111,11 @@ function loadTracks(tracks) {
 
   $table.append($tbody.html(tbodyContent))
 
-  $tbody.on('click', 'tr', function() {
-    Player.play(this.id)
-  })
-
-  $table.find('.queue').on('click', function(e) {
-    e.stopPropagation()
-
-    Player.queue(this.parentNode.parentNode.id)
-  })
-
-  $tbody.find('.download').click(stopPropagation)
-
   if (Player.currentTrack) {
     $tbody.find('#'+ Player.currentTrack._id).addClass('active')
   }
+
+  $tracks.append($table)
 }
 
 function loadArtists(artists) {
@@ -440,6 +433,19 @@ require(['jquery', 'menu'], function($) {
   })
 
   $('#video').append(Player.audio)
+
+  $('#tracks').on('click', 'tr', function(e) {
+    var $target = $(e.target)
+
+    if ($target.hasClass('queue')) {
+      return Player.queue(this.id)
+    }
+    else if ($target.hasClass('download')) {
+      return
+    }
+
+    Player.play(this.id)
+  })
 
   $('#play').toggleClass('paused', Player.audio.paused)
             .click(function() { Player.play() })

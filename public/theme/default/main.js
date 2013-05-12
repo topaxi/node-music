@@ -92,7 +92,7 @@ function newPlaylist() {
             })
 }
 
-function loadTracks(tracks, cb) {
+function loadTracks(tracks) {
   var $table = $('<table>').appendTo($('#tracks').empty())
     , $tbody = $('<tbody>')
 
@@ -100,11 +100,13 @@ function loadTracks(tracks, cb) {
 
   if (!tracks) return
 
-  tracks.forEach(function(track, i) {
-    $tbody.append(trackrow(track))
-  })
+  // DOM is slow, js string concat is way faster
+  var tbodyContent = ''
+  for (var i = 0, l = tracks.length; i < l; ++i) {
+    tbodyContent += trackrow(tracks[i])
+  }
 
-  $table.append($tbody)
+  $table.append($tbody.html(tbodyContent))
 
   $tbody.on('click', 'tr', function() {
     Player.play(this.id)
@@ -116,15 +118,11 @@ function loadTracks(tracks, cb) {
     Player.queue(this.parentNode.parentNode.id)
   })
 
-  if ($.ui) {
-    $tbody.find('.download').click(stopPropagation)
-  }
+  $tbody.find('.download').click(stopPropagation)
 
   if (Player.currentTrack) {
     $tbody.find('#'+ Player.currentTrack._id).addClass('active')
   }
-
-  if (typeof cb == 'function') cb()
 }
 
 function loadArtists(artists) {
@@ -199,7 +197,7 @@ function trackrow(track) {
   var album = track && track.album && track.album.title
     , isNew = Date.now() - +track.imported < DAY_IN_MILLISECONDS
 
-  return $('<tr id="'+ track._id +'"'+ (isNew ? ' class="new" title="New!"' : '') +'>'
+  return '<tr id="'+ track._id +'"'+ (isNew ? ' class="new" title="New!"' : '') +'>'
              + '<td><a title="Add to queue" class="queue ui-icon ui-icon-circle-plus"></a></td>'
              + '<td class="tar">'+ (track.number ? track.number + '.' :  '') +'</td>'
              + '<td>'+ htmltruncate(track.title, 48, ' ') +'</td>'
@@ -210,7 +208,6 @@ function trackrow(track) {
              + '<td class="tac">'+ (parseInt(track.year, 10) ? track.year.slice(0, 4) : '') +'</td>'
              + '<td><a href="'+ track.path +'?download" title="Download" class="download ui-icon ui-icon-arrowthickstop-1-s ui-button ui-widget ui-corner-all ui-state-default"></a></td>'
            + '</tr>'
-          )
 }
 
 function stopPropagation(e) { e.stopPropagation() }

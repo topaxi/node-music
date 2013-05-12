@@ -529,13 +529,37 @@ require(['jquery', 'menu'], function($) {
 })
 
 function searchFilter() {
-  var val = $('#search').val().trim()
+  var val     = $('#search').val().trim()
+    , matches = /^(title|artists?|album|genres?):(.*)/.exec(val)
 
-  if (val.length > 2) {
-    loadTracks(filterTracksByRegExp(new RegExp(val, 'i')))
+  if (matches) {
+    var r = new RegExp(matches[2].trim(), 'i')
+      , m = matches[1]
+
+    switch (m) {
+      case 'title':
+      case 'genre':
+      case 'genres':
+        if (m == 'genre') m = 'genres'
+
+        loadTracks(filterTracksByField(r, m))
+        break
+      case 'artist':
+      case 'artists':
+        loadTracks(filterTracksByArtists(r))
+        break
+      case 'album':
+        loadTracks(filterTracksByField(r, 'album', 'title'))
+        break
+    }
   }
-  else if ($('#tracks').find('tr').length - 1 != Player._tracks.length) {
-    loadTracks(Player._tracks)
+  else {
+    if (val.length > 2) {
+      loadTracks(filterTracksByRegExp(new RegExp(val, 'i')))
+    }
+    else if ($('#tracks').find('tr').length - 1 != Player._tracks.length) {
+      loadTracks(Player._tracks)
+    }
   }
 }
 
@@ -636,6 +660,29 @@ function filterTracksByRegExp(regexp) {
     if (regexp.test(track.title))                      return true
     if (track.album && regexp.test(track.album.title)) return true
 
+    return track.artists.some(function(artist) {
+                                return regexp.test(artist.name)
+                              })
+  })
+}
+
+function filterTracksByField(regexp) {
+  var args = Array.prototype.slice.call(arguments, 1)
+
+  return Player._tracks.filter(function(v) {
+    for (var i = 0, l = args.length; i < l; ++i) {
+      if (!v[args[i]]) v = ''
+      else if (v)      v = v[args[i]]
+    }
+
+    return Array.isArray(v)
+      ? v.some(function(v) { return regexp.test(v) })
+      : regexp.test(v)
+  })
+}
+
+function filterTracksByArtists(regexp) {
+  return Player._tracks.filter(function(track) {
     return track.artists.some(function(artist) {
                                 return regexp.test(artist.name)
                               })
